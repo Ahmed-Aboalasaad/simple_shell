@@ -12,8 +12,10 @@ void subScriptBuilder(int, char **, Script *, size_t *);
  * it represents #commands done on this session
  *
  * Return:
- * 0 for success (There is a command to execute & it was built normally),
- * 1 if the it read empty input("")
+ * 0 for success (It read the command, built it normally,
+ * and it's ready to be executed),
+ * 
+ * 1 if it read empty input("")
  * In htis case, you you should execute nothing & prompt again
 */
 int buildCommand(Command **cmd, char *str, size_t *commandID)
@@ -26,12 +28,10 @@ int buildCommand(Command **cmd, char *str, size_t *commandID)
 	(*commandID)++;
 	*cmd = malloc(sizeof(**cmd));
 	if (!*cmd)
-	{
-		perror("Allocation");
 		exit(EXIT_FAILURE);
-	}
 	command = *cmd;
-	command->str = command->argv = NULL;
+	command->str = NULL;
+	command->argv = NULL;
 
 	/* Fill the fields */
 	if (str)
@@ -45,19 +45,19 @@ int buildCommand(Command **cmd, char *str, size_t *commandID)
 		free(command);
 		exit(EXIT_FAILURE);
 	}
-	if (charCount == -2) /* EOF without any chars before.. Closing the shell */
+	if (charCount == 0) /* EOF without any chars before.. Close the shell */
 	{
 		free(command);
 		print(STDOUT_FILENO, "\n");
 		exit(EXIT_SUCCESS);
 	}
-	if (!(command->str[0])) /* Empty Command ("") */
+	if (command->str[0] == '\n') /* Empty Command ("\n") */
 	{
 		free(command->str);
 		free(command);
 		return (1);
 	}
-	command->argv = slice(command->str, " ");
+	command->argv = slice(command->str, " \n");
 	return (0);
 }
 
@@ -146,6 +146,16 @@ void subScriptBuilder(int n, char **lines, Script *script
 	free(lines);
 }
 
+/**
+ * _getline - reads a line from stream to string
+ * (including the new line if it was the delimiter) and updates size if needed
+ *
+ * @string: pointer to the string where it should write what it reads
+ * @size: pointer to the size of string
+ * @stream: the stream it should read from
+ *
+ * Return: #characters read if it succeeds, -1 for errors
+*/
 long _getline(char **string, size_t *size, int stream)
 {
 	char *buffer, *tmp;
@@ -166,7 +176,7 @@ long _getline(char **string, size_t *size, int stream)
 			if (charCount == -1)
 				return (-1); /* Reading Error or Signal Interruption */
 			if (!bufferedBefore) /* reaching here means charCount == 0 */
-				return (-2); /* EOF without any characters before */
+				return (0); /* read EOF without any characters before */
 		}
 		buffer[charCount] = '\0';
 		tmp = *string;
@@ -177,5 +187,5 @@ long _getline(char **string, size_t *size, int stream)
 	}
 	free(buffer);
 	*size = _strlen(*string);
-	return (charCount);
+	return (*size);
 }

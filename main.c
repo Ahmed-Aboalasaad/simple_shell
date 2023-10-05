@@ -7,17 +7,20 @@
  * @av: argument vector
  * Return: 0 for success, non-zero value for errors
 */
-int main(int ac, char **av)
+int main(int ac, char **av) 
 {
-	size_t commandCount;
+	/* #commands done in this session */
+	/* (incremented by 1 every time in input is read) */
+	size_t commandID;
 	Script *script;
 	Command *command;
 	int i;
 
 	/* Initial Values */
 	(void)ac;
-	commandCount = 0;
+	commandID = 0;
 	script = NULL;
+	command = NULL;
 
 	/* Interactive mode */
 	if (isatty(STDIN_FILENO))
@@ -25,18 +28,17 @@ int main(int ac, char **av)
 		while (1)
 		{
 			print(STDOUT_FILENO, "#cisfun$ ");
-			if (buildCommand(&command, NULL, &commandCount))
-				continue;
-			executeCommand(command, av[0], &commandCount, 1);
+			if (buildCommand(&command, NULL, &commandID))
+				continue; /* empty command: ("\n") */
+			executeCommand(command, av[0], &commandID, 1);
 		}
 	}
-	/* non-interactive mode */
-	else
+	else /* non-interactive mode */
 	{
-		if (buildScript(&script, &commandCount)) /* Empty Script */
+		if (buildScript(&script, &commandID)) /* Empty Script */
 			return (0);
 		for (i = 0; script->commands[i]; i++)
-			executeCommand(script->commands[i], av[0], &commandCount, 0);
+			executeCommand(script->commands[i], av[0], &commandID, 0);
 	}
 	return (0);
 }

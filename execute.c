@@ -4,15 +4,15 @@ void executeByPath(Command *command);
 int executeBuiltIns(char **argv);
 int setPath(char **argv);
 
-void notFound(char *shellName, size_t *commandCount, Command *command,
-char commandCountStr)
+void notFound(char *shellName, size_t *commandID, Command *command)
 {
 	int i;
+	char *str;
 
 	print(STDERR_FILENO, shellName);
 	print(STDERR_FILENO, ": ");
-	commandCountStr = intToStr(*commandCount);
-	print(STDERR_FILENO, commandCountStr);
+	str = intToStr(*commandID);
+	print(STDERR_FILENO, str);
 	print(STDERR_FILENO, ": ");
 	print(STDERR_FILENO, command->argv[0]);
 	print(STDERR_FILENO, ": not found\n");
@@ -20,7 +20,7 @@ char commandCountStr)
 		free(command->argv[i]);
 	free(command->argv);
 	free(command->str);
-	free(commandCountStr);
+	free(str);
 	free(command);
 }
 
@@ -29,16 +29,15 @@ char commandCountStr)
  *
  * @command: The command struct
  * @shellName: the name of the running shell
- * @commandCount: the number of the command being builded right now
+ * @commandID: the number of the command being builded right now
  * @interactive: interactive ?
  * Return: void
 */
-void executeCommand(Command *command, char *shellName, size_t *commandCount
+void executeCommand(Command *command, char *shellName, size_t *commandID
 , int interactive)
 {
 	pid_t id;
-	int i, status, result;
-	char *commandCountStr;
+	int i, result;
 
 	result = executeBuiltIns(command->argv);
 	if (result > -1) /* a built-in was found */
@@ -54,13 +53,13 @@ void executeCommand(Command *command, char *shellName, size_t *commandCount
 	}
 	if (setPath(command->argv) != 0) /* no such program exists */
 	{
-		notFound(shellName, commandCount, command, commandCountStr);
+		notFound(shellName, commandID, command);
 		return;
 	}
 	id = fork();
 	if (id) /* Parent */
 	{
-		wait(&status);
+		wait(NULL);
 		if (interactive)
 			free(command->str);
 		for (i = 0; command->argv[i]; i++)
@@ -146,7 +145,7 @@ void executeByPath(Command *command)
  *
  * @argv: the argument vecotr
  * Return:
- * 0 if a built in was found was found
+ * 0 if a non-exit built in was found
  * 1 if an exit built in was found
  * -1 if no built-in was found
 */
@@ -173,6 +172,6 @@ int executeBuiltIns(char **argv)
 	 *	_cd(argv[1]);
 	 *	return (0);
 	 * }
-	*/
+	 */
 	return (-1);
 }

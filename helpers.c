@@ -29,12 +29,11 @@ void print(int fd, char *message)
  *
  * @str: the string to slice
  * @delimiter: the delimiter (slice at this character)
- * (This version of slice accepts a delimiters string of only one character)
  * Return: a NULL-terminated array of sliced strings, or NULL if it fails
 */
 char **slice(char *str, char *delimiter)
 {
-	int i, sliceCount;
+	int i, j, sliceCount;
 	char **result, *slice, *source;
 
 	/* Input Validation */
@@ -44,8 +43,9 @@ char **slice(char *str, char *delimiter)
 	/* Prepare the slices array */
 	source = copyStr(str);
 	for (i = 0, sliceCount = 1; source[i]; i++)
-		if (source[i] == delimiter[0])
-			sliceCount++;
+		for (j = 0; delimiter[j]; j++)
+			if (source[i] == delimiter[j])
+				sliceCount++;
 
 	result = malloc(sizeof(*result) * (sliceCount + 1));
 	if (!result)
