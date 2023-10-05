@@ -7,7 +7,7 @@
  * @av: argument vector
  * Return: 0 for success, non-zero value for errors
 */
-int main(int ac, char **av) 
+int main(int ac, char **av)
 {
 	/* #commands done in this session */
 	/* (incremented by 1 every time in input is read) */

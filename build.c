@@ -14,7 +14,7 @@ void subScriptBuilder(int, char **, Script *, size_t *);
  * Return:
  * 0 for success (It read the command, built it normally,
  * and it's ready to be executed),
- * 
+ *
  * 1 if it read empty input("")
  * In htis case, you you should execute nothing & prompt again
 */
@@ -171,7 +171,7 @@ long _getline(char **string, size_t *size, int stream)
 		if (charCount < 1)
 		{
 			free(*string);
-            *string = NULL;
+			*string = NULL;
 			free(buffer);
 			if (charCount == -1)
 				return (-1); /* Reading Error or Signal Interruption */

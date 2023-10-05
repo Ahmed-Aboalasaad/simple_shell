@@ -4,6 +4,14 @@ void executeByPath(Command *command);
 int executeBuiltIns(char **argv);
 int setPath(char **argv);
 
+/**
+ * notFound - handle the case of an unknown command was input
+ *
+ * @shellName: the shell name
+ * @commandID: #of this command in the current session
+ * @command: the command itself
+ * Return: nothing
+*/
 void notFound(char *shellName, size_t *commandID, Command *command)
 {
 	int i;
