@@ -3,22 +3,27 @@
 void subScriptBuilder(int, char **, Script *, size_t *);
 
 /**
- * buildCommand - finds out all the values of a command (reads its string,
- * makes argv[] for it, and sets flags for build in commands)
+ * buildCommand - finds out all the values of a command
+ * (Reads its string, and Makes argv[] for it)
  *
- * @cmd: pointer to the command pointer
- * @line: the command line (if you have it). Set it to NULL if you don't
- * @commandCount: command counter
- * Return: 0 for success (There is a command to execute),
- * 1 for: the user inputted "" ... prompt the user to write again
+ * @cmd: pointer to a command pointer
+ * @str: the command line (if you have it). Set it to NULL if you don't
+ * @commandID:pointer to the commandID variable in main()
+ * it represents #commands done on this session
+ *
+ * Return:
+ * 0 for success (There is a command to execute & it was built normally),
+ * 1 if the it read empty input("")
+ * In htis case, you you should execute nothing & prompt again
 */
-int buildCommand(Command **cmd, char *line, size_t *commandCount)
+int buildCommand(Command **cmd, char *str, size_t *commandID)
 {
-	size_t strSize;
+	size_t commandSize;
 	long charCount;
 	Command *command;
 
-	(*commandCount)++;
+	/* Allocation */
+	(*commandID)++;
 	*cmd = malloc(sizeof(**cmd));
 	if (!*cmd)
 	{
@@ -26,32 +31,32 @@ int buildCommand(Command **cmd, char *line, size_t *commandCount)
 		exit(EXIT_FAILURE);
 	}
 	command = *cmd;
+	command->str = command->argv = NULL;
 
-	/* Read the line (either from stdin or the given argument) */
-	if (!line)
+	/* Fill the fields */
+	if (str)
 	{
-		charCount = _getline(&command->str, &strSize, STDIN_FILENO);
-		if (charCount == -1) /* Reading error */
-		{
-			free(command);
-			exit(EXIT_FAILURE);
-		}
-		if (charCount == -2) /* Closing the shell */
-		{
-			free(command);
-			print(STDOUT_FILENO, "\n");
-			exit(EXIT_SUCCESS);
-		}
-		if (!(command->str[0])) /* Empty Command */
-		{
-			free(command->str);
-			free(command);
-			return (1);
-		}
+		command->str = str, command->argv = slice(command->str, " ");
+		return (0);
 	}
-	else
-		command->str = line;
-
+	charCount = _getline(&command->str, &commandSize, STDIN_FILENO);
+	if (charCount == -1) /* Reading error */
+	{
+		free(command);
+		exit(EXIT_FAILURE);
+	}
+	if (charCount == -2) /* EOF without any chars before.. Closing the shell */
+	{
+		free(command);
+		print(STDOUT_FILENO, "\n");
+		exit(EXIT_SUCCESS);
+	}
+	if (!(command->str[0])) /* Empty Command ("") */
+	{
+		free(command->str);
+		free(command);
+		return (1);
+	}
 	command->argv = slice(command->str, " ");
 	return (0);
 }
@@ -141,57 +146,36 @@ void subScriptBuilder(int n, char **lines, Script *script
 	free(lines);
 }
 
-/**
- * _getline - reads a line from stream to string
- * and updates the size (n) to the new size
- *
- * @string: pointer to the string where it should write the read string
- * @n: pointer to the size of this allocated memory (string)
- * @stream: the stream it should read from
- * Return: #characters read if it succeeds,
- * -1 for errors,
- * -2 for EOF without any characters before
-*/
-long _getline(char **string, size_t *n, int stream)
+long _getline(char **string, size_t *size, int stream)
 {
 	char *buffer, *tmp;
 	int charCount, bufferedBefore;
 
-	*string = malloc(1);
-	*string[0] = '\0', buffer = malloc(BUFFER_SIZE);
+	if (*string)
+		free(*string);
+	*string = malloc(1), *string[0] = '\0', buffer = malloc(BUFFER_SIZE);
 
-	for (bufferedBefore = 0; 1; )
+	for (bufferedBefore = 0; 1; bufferedBefore = 1)
 	{
 		charCount = read(stream, buffer, BUFFER_SIZE - 1);
-		if (charCount == 0 && !bufferedBefore)
+		if (charCount < 1)
 		{
 			free(*string);
+            *string = NULL;
 			free(buffer);
-			return (-2);
+			if (charCount == -1)
+				return (-1); /* Reading Error or Signal Interruption */
+			if (!bufferedBefore) /* reaching here means charCount == 0 */
+				return (-2); /* EOF without any characters before */
 		}
-		if (charCount == -1)
-		{
-			free(*string);
-			free(buffer);
-			perror("Read");
-			return (-1);
-		}
-		bufferedBefore = 1;
 		buffer[charCount] = '\0';
-		if (charCount > 0 && buffer[charCount - 1] == '\n')
-			buffer[charCount - 1] = '\0';
 		tmp = *string;
 		*string = concatStr(*string, buffer);
 		free(tmp);
-		if (charCount == 0)
-		{
-			free(buffer);
-			return (charCount);
-		}
-		if (buffer[charCount - 1] == '\0')
+		if (charCount < BUFFER_SIZE - 1)
 			break;
 	}
 	free(buffer);
-	*n = _strlen(*string);
+	*size = _strlen(*string);
 	return (charCount);
 }
