@@ -1,7 +1,5 @@
 #include "main.h"
 
-void subScriptBuilder(int, char **, Script *, size_t *);
-
 /**
  * buildCommand - finds out all the values of a command
  * (Reads its string, and Makes argv[] for it)
@@ -59,91 +57,6 @@ int buildCommand(Command **cmd, char *str, size_t *commandID)
 	}
 	command->argv = slice(command->str, " \n");
 	return (0);
-}
-
-/**
- * buildScript - fills the fields of a script instance of the Script structure.
- * It read the whole input (file / redirection) in one string, and slices it
- * into multiple commands in script->lines
- *
- * @s: pointer to the script instance
- * @commandCount: command counter
- * Return: 0 for success, 1 if an empty script was provided
- */
-int buildScript(Script **s, size_t *commandCount)
-{
-	int charCount, n;
-	size_t strSize;
-	char **lines;
-	Script *script;
-
-	/* make a script object */
-	*s = malloc(sizeof(**s));
-	if (!*s)
-		exit(EXIT_FAILURE);
-	script = *s;
-
-	/* Read the script (multiple lines) */
-	charCount = _getline(&script->str, &strSize, STDIN_FILENO);
-	if (charCount == -1) /* Reading Error */
-	{
-		free(script);
-		exit(EXIT_FAILURE);
-	}
-	if (charCount == -2) /* Empty Script */
-	{
-		free(script);
-		return (1);
-	}
-
-	/* slice the script into lines & build the commands using them */
-	lines = slice(script->str, "\n");
-	if (!lines) /* Allocation Error in slice() */
-	{
-		free(script->str);
-		free(script);
-		exit(EXIT_FAILURE);
-	}
-	for (n = 0; lines[n]; )
-		n++;
-	script->commands = malloc(sizeof(*script->commands) * (n + 1));
-	subScriptBuilder(n, lines, script, commandCount);
-
-	return (0);
-}
-
-/**
- * subScriptBuilder - extension for buildScript() as it exceeded 40 lines
- * and we need to satisfy betty
- *
- * @n: #commands in the script
- * @lines: an array holding the command lines
- * @script: pointer to the script instance
- * @commandCount: command counter
- * Return: nothing;
-*/
-void subScriptBuilder(int n, char **lines, Script *script
-, size_t *commandCount)
-{
-	int i;
-
-	if (!script->commands)
-	{
-		free(script->str);
-		for (i = 0; lines[i]; i++)
-			free(lines[i]);
-		free(lines);
-		free(script);
-		exit(EXIT_FAILURE);
-	}
-	script->commands[n] = NULL;
-
-	for (i = 0; i < n; i++)
-		buildCommand(&(script->commands[i]), lines[i], commandCount);
-
-	for (i = 0; lines[i]; i++)
-		free(lines[i]);
-	free(lines);
 }
 
 /**

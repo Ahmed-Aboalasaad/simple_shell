@@ -1,0 +1,133 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/wait.h>
+#include <errno.h>
+#define BUFFER_SIZE 1024
+
+/**
+ * _strlen - calculates the length of given string
+ *
+ * @str: the string to calculate its length
+ * Return: int newValue represents length of string
+ */
+int _strlen(const char *str)
+{
+	int len;
+
+	if (!str || !str[0])
+		return (0);
+
+	for (len = 0; str[len]; )
+		len++;
+	return (len);
+}
+
+/**
+ * concatStr - concatenate two given strings
+ *
+ * @s1: first string
+ * @s2: second string
+ * Return: the concatenated string
+ */
+char *concatStr(char *s1, char *s2)
+{
+	int i, len1, len2;
+	char *result;
+
+	for (len1 = 0; s1[len1]; )
+		len1++;
+	for (len2 = 0; s2[len2]; )
+		len2++;
+
+	result = malloc(sizeof(*result) * (len1 + len2 + 1));
+	if (!result)
+		return (NULL);
+	result[len1 + len2] = '\0';
+
+	for (i = 0; i < len1; i++)
+		result[i] = s1[i];
+	for (i = 0; i < len2; i++)
+		result[i + len1] = s2[i];
+
+	return (result);
+}
+
+/**
+ * _getline - reads a line from stream to string
+ * (including the new line if it was the delimiter) and updates size if needed
+ *
+ * @string: pointer to the string where it should write what it reads
+ * @size: pointer to the size of string
+ * @stream: the stream it should read from
+ *
+ * Return: #characters read if it succeeds,
+ * -1 for errors,
+ * -2 if EOF was encountered without any characters before
+*/
+long _getline(char **string, size_t *size, int stream)
+{
+	char *buffer, *tmp;
+	int charCount, bufferedBefore;
+
+	if (*string)
+		free(*string);
+	*string = malloc(1), *string[0] = '\0', buffer = malloc(BUFFER_SIZE);
+
+	for (bufferedBefore = 0; 1; bufferedBefore = 1)
+	{
+		charCount = read(stream, buffer, BUFFER_SIZE - 1);
+		if (charCount < 1)
+		{
+			free(*string);
+            *string = NULL;
+			free(buffer);
+			if (charCount == -1)
+				return (-1); /* Reading Error or Signal Interruption */
+			if (!bufferedBefore) /* reaching here means charCount == 0 */
+				return (-2); /* EOF without any characters before */
+		}
+		buffer[charCount] = '\0';
+		tmp = *string;
+		*string = concatStr(*string, buffer);
+		free(tmp);
+		if (charCount < BUFFER_SIZE - 1)
+			break;
+	}
+	free(buffer);
+	*size = _strlen(*string);
+	return (charCount);
+}
+
+/**
+ * main - main
+ * Return: int
+*/
+int main(void)
+{
+    // char *string;
+    // size_t size;
+    // long value;
+
+    // string = malloc(1);
+    // if (!string)
+    //     printf("error\n");
+    // value = _getline(&string, &size, STDIN_FILENO);
+    // printf("String: \"%s\"\n", string);
+    // printf("_getline() return value: %ld\n", value);
+    // free(string);
+
+    // char str[] = "This is some test\n";
+    // for (int i = 0; i < 5; i++)
+    //     printf("%d: %s\n", i, strotk())
+
+    char str[] = "This is some test\n";
+    char *slice = strdup(strtok(str, " \n"));
+	for (int i = 0; i < 4; slice = strdup(strtok(NULL, " \n")), i++)
+		printf("slice: %s\n", slice);
+
+    return (0);
+}

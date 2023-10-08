@@ -1,7 +1,7 @@
 #include "main.h"
 
 /**
- * _strlen - calculates the length of given string
+ * _strlen - calculates the length of the given string
  *
  * @str: the string to calculate its length
  * Return: int newValue represents length of string
@@ -62,4 +62,25 @@ int isPath(char *str)
 		if (str[i] == '/')
 			return (1);
 	return (0);
+}
+
+/**
+ * contains - check if str contains the character c
+ *
+ * @str: the string
+ * @c:the character
+ *
+ * Return: 1 if it contains it, 0 if it doesn't
+ * -1 if str is null or empty
+*/
+char contains(char *str, char c)
+{
+	int i;
+
+	if (!str | !str[0])
+		return (-1);
+	for (i = 0; str[i]; i++)
+		if (str[i] == c)
+			return (1);
+	return (0);	
 }

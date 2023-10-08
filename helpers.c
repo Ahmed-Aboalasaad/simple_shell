@@ -16,9 +16,7 @@ void print(int fd, char *message)
 	size_t length;
 	ssize_t status;
 
-	for (length = 0; message[length];)
-		length++;
-	status = write(fd, message, length);
+	status = write(fd, message, _strlen(message));
 	if (status == -1)
 		perror("Writ() Error");
 }
@@ -40,7 +38,7 @@ char **slice(char *str, char *delimiter)
 	if (!str || !str[0] || !delimiter || !delimiter[0])
 		return (NULL);
 
-	/* Prepare the slices array */
+	/* Prepare the slices array */ // Error: counts the delimiters more than one time
 	source = copyStr(str);
 	for (i = 0, sliceCount = 1; source[i]; i++)
 		for (j = 0; delimiter[j]; j++)

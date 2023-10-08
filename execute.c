@@ -1,8 +1,55 @@
 #include "main.h"
 
+/* Prototypes */
+void notFound(char *shellName, size_t *commandID, Command *command);
 void executeByPath(Command *command);
 int executeBuiltIns(char **argv);
 int setPath(char **argv);
+
+/**
+ * executeCommand - executes a command and then frees its feilds
+ *
+ * @command: The command struct
+ * @shellName: the name of the running shell
+ * @commandID: the number of the command being builded right now
+ * @interactive: interactive ?
+ * Return: void
+*/
+void executeCommand(Command *command, char *shellName,
+					size_t *commandID, int interactive)
+{
+	int i, result;
+
+	result = executeBuiltIns(command->argv);
+	if (result > -1) /* a built-in was found */
+	{
+		free(command->str);
+		for (i = 0; command->argv[i]; i++)
+			free(command->argv[i]);
+		free(command->argv);
+		free(command);
+		if (result)
+			exit(EXIT_SUCCESS);
+		return;
+	}
+	if (setPath(command->argv)) /* no such accessible program exists */
+	{
+		notFound(shellName, commandID, command);
+		return;
+	}
+	if (fork()) /* Parent */
+	{
+		wait(NULL);
+		if (interactive) // look here
+			free(command->str);
+		for (i = 0; command->argv[i]; i++)
+			free(command->argv[i]);
+		free(command->argv);
+		free(command);
+	}
+	else /* Child */
+		executeByPath(command);
+}
 
 /**
  * notFound - handle the case of an unknown command was input
@@ -33,53 +80,6 @@ void notFound(char *shellName, size_t *commandID, Command *command)
 }
 
 /**
- * executeCommand - executes a command and then frees its feilds
- *
- * @command: The command struct
- * @shellName: the name of the running shell
- * @commandID: the number of the command being builded right now
- * @interactive: interactive ?
- * Return: void
-*/
-void executeCommand(Command *command, char *shellName, size_t *commandID
-, int interactive)
-{
-	pid_t id;
-	int i, result;
-
-	result = executeBuiltIns(command->argv);
-	if (result > -1) /* a built-in was found */
-	{
-		free(command->str);
-		for (i = 0; command->argv[i]; i++)
-			free(command->argv[i]);
-		free(command->argv);
-		free(command);
-		if (result)
-			exit(EXIT_SUCCESS);
-		return;
-	}
-	if (setPath(command->argv) != 0) /* no such program exists */
-	{
-		notFound(shellName, commandID, command);
-		return;
-	}
-	id = fork();
-	if (id) /* Parent */
-	{
-		wait(NULL);
-		if (interactive)
-			free(command->str);
-		for (i = 0; command->argv[i]; i++)
-			free(command->argv[i]);
-		free(command->argv);
-		free(command);
-	}
-	else /* Child */
-		executeByPath(command);
-}
-
-/**
  * setPath - searches for the "program" executable in the paths listed in
  * the PATH environment varaible. If it was found, it sets its (the first
  * element in argv) to the path
@@ -87,7 +87,7 @@ void executeCommand(Command *command, char *shellName, size_t *commandID
  * @argv: the argument vector to be given for the program to be executed
  * Return: 0 for success (there is a program with such a name),
  * 1 otherwise (no such programs in the system or invalid input)
-*/
+ */
 int setPath(char **argv)
 {
 	int i;
@@ -98,12 +98,15 @@ int setPath(char **argv)
 	if (!argv || !argv[0])
 		return (1);
 
-	/* Don't search for an executable if the input is path already */
+	/* Don't search for an executable if the input is already a path */
 	if (isPath(argv[0]))
-		return (stat(argv[0], &status) != 0); /* stat() returns 0 for success */
+		return (stat(argv[0], &status));
 
 	/* Search for the executable file */
 	paths = slice(_getenv("PATH", &i), ":");
+	if (!paths)
+		exit(EXIT_FAILURE);
+	
 	for (i = 0; paths[i]; i++)
 	{
 		path = concatFile(paths[i], argv[0]);
