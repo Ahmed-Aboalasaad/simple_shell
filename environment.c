@@ -39,6 +39,10 @@ int _setenv(const char *name, const char *value, int overwrite)
 	char *oldValue,*newString, **newEnviron;
 	int i, varCount, index;
 
+	/* Input Validation */
+	if (!name | !name[0] | contains(name, '='))
+		return (1);
+
 	newString = buildEnvStr(name, value), oldValue = _getenv(name, &index);
 	if (!newString)
 		return (1);

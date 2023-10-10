@@ -61,3 +61,14 @@ char **slice(char *str, char *delimiter)
 	free(source);
 	return (result);
 }
+
+/**
+ * interruption - prompts the user again when they hit Ctrl+C (iterruption)
+ *
+ * Return: nothing
+*/
+void interruption()
+{
+	print(STDOUT_FILENO, "\n#cisfun$ ");
+	fflush(stdout);
+}

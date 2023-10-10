@@ -21,6 +21,7 @@ int main(int ac, char **av)
 	commandID = 0;
 	script = NULL;
 	command = NULL;
+	signal(SIGINT, interruption);
 
 	/* Interactive mode */
 	if (isatty(STDIN_FILENO))

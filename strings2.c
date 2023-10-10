@@ -73,7 +73,7 @@ int isPath(char *str)
  * Return: 1 if it contains it, 0 if it doesn't
  * -1 if str is null or empty
 */
-char contains(char *str, char c)
+char contains(const char *str, char c)
 {
 	int i;
 

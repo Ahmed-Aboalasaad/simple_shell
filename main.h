@@ -9,6 +9,7 @@
 #include <sys/stat.h>
 #include <sys/wait.h>
 #include <errno.h>
+#include "signal.h"
 #define BUFFER_SIZE 1024
 
 /**
@@ -48,6 +49,7 @@ void executeCommand(Command *command, char *shellName,
 /* Helpers */
 void print(int fd, char *message);
 char **slice(char *str, char *delimiter);
+void interruption();
 
 /* String Manipulators */
 char *copyStr(char *source);
@@ -58,7 +60,7 @@ int equal(char *s1, char *s2);
 int _strlen(const char *str);
 char *concatStr(char *s1, char *s2);
 int isPath(char *str);
-char contains(char *str, char c);
+char contains(const char *str, char c);
 
 /* Environment */
 char *_getenv(const char *var, int *index);
