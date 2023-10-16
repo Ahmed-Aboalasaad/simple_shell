@@ -26,7 +26,7 @@ typedef struct Command
 } Command;
 
 /**
- * struct Scr ipt- a complete script of one or more commands
+ * struct Script- a complete script of one or more commands
  * @str: all the script in one string
  * @commands: array of commands
  *
@@ -42,12 +42,12 @@ long readLine(char **string, int stream);
 Command *buildCommand(char *readyStr, size_t *commandID);
 int buildScript(Script **s, size_t *commandCount);
 void executeCommand(Command *command, char *shellName,
-					size_t *commandID, int interactive);
+				size_t *commandID, int interactive);
 
 /* Helpers */
 void print(int fd, char *message);
 char **slice(char *str, char *delimiter);
-void interruption();
+void interruption(void);
 
 /* String Manipulators */
 char *copyStr(char *source);
@@ -64,5 +64,12 @@ char contains(const char *str, char c);
 char *_getenv(const char *var, int *index);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
+
+/* Exit Handler */
+int exitHandler(char *shellName, size_t *commandID, Command *command);
+void illegalNumber(char *shellName, size_t *commandID, Command *command);
+
+/* String Tokenizer */
+char *_strtok(char *str, char *delimiter);
 
 #endif

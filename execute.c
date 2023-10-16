@@ -14,22 +14,24 @@ int setPath(char **argv);
  * @commandID: the number of the command being builded right now
  * @interactive: interactive ?
  * Return: void
-*/
+ */
 void executeCommand(Command *command, char *shellName,
-					size_t *commandID, int interactive)
+			size_t *commandID, int interactive)
 {
-	int i, result;
+	int i, result, exitStatus;
 
 	result = executeBuiltIns(command->argv);
-	if (result > -1) /* a built-in was found */
+	if (result) /* 1: exit */
+		exitStatus = exitHandler(shellName, commandID, command);
+	if (result > -1) /* a built-in was found 1:exit, 0:another built-in */
 	{
 		free(command->str);
 		for (i = 0; command->argv[i]; i++)
 			free(command->argv[i]);
 		free(command->argv);
 		free(command);
-		if (result)
-			exit(EXIT_SUCCESS);
+		if (exitStatus > -1)
+			exit(exitStatus);
 		return;
 	}
 	if (setPath(command->argv)) /* no such accessible program exists */
@@ -58,7 +60,7 @@ void executeCommand(Command *command, char *shellName,
  * @commandID: #of this command in the current session
  * @command: the command itself
  * Return: nothing
-*/
+ */
 void notFound(char *shellName, size_t *commandID, Command *command)
 {
 	int i;
@@ -106,7 +108,7 @@ int setPath(char **argv)
 	paths = slice(_getenv("PATH", &i), ":");
 	if (!paths)
 		exit(EXIT_FAILURE);
-	
+
 	for (i = 0; paths[i]; i++)
 	{
 		path = concatFile(paths[i], argv[0]);
@@ -134,7 +136,7 @@ int setPath(char **argv)
  *
  * @command: the command to be executed
  * Return: nothing
-*/
+ */
 void executeByPath(Command *command)
 {
 	int i;
@@ -159,7 +161,7 @@ void executeByPath(Command *command)
  * 0 if a non-exit built in was found
  * 1 if an exit built in was found
  * -1 if no built-in was found
-*/
+ */
 int executeBuiltIns(char **argv)
 {
 	/* Check for built-Ins*/
@@ -180,8 +182,8 @@ int executeBuiltIns(char **argv)
 	/*
 	 * else if (equal(argv[0], "cd"))
 	 * {
-	 *	_cd(argv[1]);
-	 *	return (0);
+	 *      _cd(argv[1]);
+	 *      return (0);
 	 * }
 	 */
 	return (-1);
