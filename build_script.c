@@ -15,7 +15,6 @@ void buildScript2(char **lines,
 int buildScript(Script **s, size_t *commandID)
 {
 	int charCount;
-	size_t strSize;
 	char **lines;
 	Script *script;
 
@@ -26,7 +25,7 @@ int buildScript(Script **s, size_t *commandID)
 	script = *s;
 
 	/* Read the script (many lines) */ /* needs fixing (reading line by line) */
-	charCount = _getline(&script->str, &strSize, STDIN_FILENO);
+	charCount = readLine(&script->str, STDIN_FILENO);
 	if (charCount == -1) /* Reading Error */
 	{
 		free(script);
@@ -81,7 +80,7 @@ void buildScript2(char **lines,
 	script->commands[commandCount] = NULL;
 
 	for (i = 0; i < commandCount; i++)
-		buildCommand(&(script->commands[i]), lines[i], commandID);
+		script->commands[i] =  buildCommand(lines[i], commandID);
 
 	for (i = 0; lines[i]; i++)
 		free(lines[i]);

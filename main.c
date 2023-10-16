@@ -7,7 +7,7 @@
  * @av: argument vector
  * Return: 0 for success, non-zero value for errors
 */
-int main(int ac, char **av)
+int main2(int ac, char **av)
 {
 	/* #commands done in this session */
 	/* (incremented by 1 every time in input is read) */
@@ -29,8 +29,9 @@ int main(int ac, char **av)
 		while (1)
 		{
 			print(STDOUT_FILENO, "#cisfun$ ");
-			if (buildCommand(&command, NULL, &commandID))
-				continue; /* empty command: ("\n") */
+			command = buildCommand(NULL, &commandID);
+			if (command->str[0] == '\n') /* empty command: ("\n") */
+				continue;
 			executeCommand(command, av[0], &commandID, 1);
 		}
 	}
@@ -41,5 +42,22 @@ int main(int ac, char **av)
 		for (i = 0; script->commands[i]; i++)
 			executeCommand(script->commands[i], av[0], &commandID, 0);
 	}
+	return (0);
+}
+
+int main(void)
+{
+	int i;
+
+	printf("==========================    Before    =================\n");
+	for (i = 0; __environ[i]; i++)
+		printf("%d) %s\n", i, __environ[i]);
+	
+	_setenv("SHELL", "new shell :)", 1);
+	printf("==========================    After     =================\n");
+	for (i = 0; __environ[i]; i++)
+		printf("%d) %s\n", i, __environ[i]);
+	printf("=========================================================\n");
+
 	return (0);
 }

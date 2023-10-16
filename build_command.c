@@ -4,43 +4,36 @@
  * buildCommand - finds out all the values of a command
  * (Reads its string, and Makes argv[] for it)
  *
- * @cmd: pointer to a command pointer
- * @str: the command line (if you have it). Set it to NULL if you don't
+ * @readyStr: the command line (if you have it). Set it to NULL if you don't
  * @commandID:pointer to the commandID variable in main()
- * it represents #commands done on this session
+ * it represents #commands done in the running shell
  *
- * Return:
- * 0 for success (It read the command, built it normally,
- * and it's ready to be executed),
- *
- * 1 if it read empty input("")
- * In htis case, you you should execute nothing & prompt again
+ * Return: a pointer to a newly constructed command structure or NULL for errors
 */
-int buildCommand(Command **cmd, char *str, size_t *commandID)
+Command *buildCommand(char *readyStr, size_t *commandID)
 {
-	size_t commandSize;
 	long charCount;
 	Command *command;
 
 	/* Allocation */
 	(*commandID)++;
-	*cmd = malloc(sizeof(**cmd));
-	if (!*cmd)
+	command = malloc(sizeof(*command));
+	if (!command)
 		exit(EXIT_FAILURE);
-	command = *cmd;
 	command->str = NULL;
 	command->argv = NULL;
 
 	/* Fill the fields */
-	if (str)
+	if (readyStr)
 	{
-		command->str = str, command->argv = slice(command->str, " ");
-		return (0);
+		command->str = readyStr, command->argv = slice(readyStr, " ");
+		return (command);
 	}
-	charCount = _getline(&command->str, &commandSize, STDIN_FILENO);
+	charCount = readLine(&command->str, STDIN_FILENO);
 	if (charCount == -1) /* Reading error */
 	{
 		free(command);
+		print(STDERR_FILENO, "Reading Error");
 		exit(EXIT_FAILURE);
 	}
 	if (charCount == 0) /* EOF without any chars before.. Close the shell */
@@ -53,14 +46,14 @@ int buildCommand(Command **cmd, char *str, size_t *commandID)
 	{
 		free(command->str);
 		free(command);
-		return (1);
+		return (command);
 	}
 	command->argv = slice(command->str, " \n");
-	return (0);
+	return (command);
 }
 
 /**
- * _getline - reads a line from stream to string
+ * readLine - reads a line from stream to string
  * (including the new line if it was the delimiter) and updates size if needed
  *
  * @string: pointer to the string where it should write what it reads
@@ -69,7 +62,7 @@ int buildCommand(Command **cmd, char *str, size_t *commandID)
  *
  * Return: #characters read if it succeeds, -1 for errors
 */
-long _getline(char **string, size_t *size, int stream)
+long readLine(char **string, int stream)
 {
 	char *buffer, *tmp;
 	int charCount, bufferedBefore;
@@ -99,6 +92,5 @@ long _getline(char **string, size_t *size, int stream)
 			break;
 	}
 	free(buffer);
-	*size = _strlen(*string);
-	return (*size);
+	return (_strlen(*string));
 }

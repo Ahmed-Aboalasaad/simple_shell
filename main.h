@@ -37,11 +37,9 @@ typedef struct Script
 	Command **commands;
 } Script;
 
-int isVarName(const char *name, const char *str);
-
 /* Main */
-long _getline(char **string, size_t *n, int stream);
-int buildCommand(Command **cmd, char *line, size_t *commandCount);
+long readLine(char **string, int stream);
+Command *buildCommand(char *readyStr, size_t *commandID);
 int buildScript(Script **s, size_t *commandCount);
 void executeCommand(Command *command, char *shellName,
 					size_t *commandID, int interactive);

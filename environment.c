@@ -1,7 +1,7 @@
 #include "main.h"
 
 char *buildEnvStr(const char *name, const char *value);
-int isVarName(const char *prefix, const char *str);
+char isVarName(const char *prefix, const char *str);
 
 /**
  * _getenv - gets the value of an environment variable named var
@@ -55,7 +55,7 @@ int _setenv(const char *name, const char *value, int overwrite)
 		}
 		/* update __environ[] */
 		/* substitue the old "var=value" string with the new one */
-		/* free(__environ[index]); */ /* Causes invalid free() */
+		free(__environ[index]); /* Causes invalid free() */
 		__environ[index] = newString;
 		return (0);
 	}
@@ -75,13 +75,11 @@ int _setenv(const char *name, const char *value, int overwrite)
 		newEnviron[i] = __environ[i];
 	newEnviron[i] = newString;
 	/* Substitue the old environ with the new one */
-	/* CAUSES INVALID FREE()
 	for (i = 0; __environ[i]; i++)
 	{
 		printf("env[%d] = \"%s\"\n", i, __environ[i]);
 		free(__environ[i]);
 	}
-	*/
 	__environ = newEnviron;
 	return (0);
 }
@@ -153,22 +151,22 @@ int _unsetenv(const char *name)
 }
 
 /**
- * isPrefix - chekcks that "prefix" is equal to the part from the
+ * isVarName - chekcks that "name" is equal to the part from the
  * beginning of "str" till an '=' sign is found
  *
  * @name: the name to be checked if it's the variable name of str
- * @str: the "var=value" string to check if name is equal to it "var" part
+ * @envStr: the "var=value" string to check if name is equal to its "var" part
  * Return: 1 if str is a valid "var=value" string and name is equal to the part
  * from the beginning of str till the '=' character, 0 otherwise.
 */
-int isVarName(const char *name, const char *str)
+char isVarName(const char *name, const char *envStr)
 {
 	int i, varLen; /* varLen is the length of the variable name in str */
 	char strIsValid; /* a flag to be raised if str has an = character */
 
 	/* Make sure str is valid & the var names has the same length */
-	for (strIsValid = 0, varLen = 0; str[varLen]; varLen++)
-		if (str[varLen] == '=')
+	for (strIsValid = 0, varLen = 0; envStr[varLen]; varLen++)
+		if (envStr[varLen] == '=')
 		{
 			strIsValid = 1;
 			break;
@@ -180,7 +178,7 @@ int isVarName(const char *name, const char *str)
 
 	/* Make sure they're identical */
 	for (i = 0; i < varLen; i++)
-		if (name[i] != str[i])
+		if (name[i] != envStr[i])
 			return (0);
 
 	/* passed the tests */

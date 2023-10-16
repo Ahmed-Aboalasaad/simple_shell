@@ -40,7 +40,7 @@ void executeCommand(Command *command, char *shellName,
 	if (fork()) /* Parent */
 	{
 		wait(NULL);
-		if (interactive) // look here
+		if (interactive) /*********** a problem hereeeee */
 			free(command->str);
 		for (i = 0; command->argv[i]; i++)
 			free(command->argv[i]);

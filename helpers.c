@@ -1,7 +1,3 @@
-/*
- * This file has general helper functions that many function from
- * different files will use
- */
 #include "main.h"
 
 /**
@@ -13,7 +9,6 @@
 */
 void print(int fd, char *message)
 {
-	size_t length;
 	ssize_t status;
 
 	status = write(fd, message, _strlen(message));
@@ -38,7 +33,7 @@ char **slice(char *str, char *delimiter)
 	if (!str || !str[0] || !delimiter || !delimiter[0])
 		return (NULL);
 
-	/* Prepare the slices array */ // Error: counts the delimiters more than one time
+	/* Prepare the slices array */ /********** Error: counts the delimiters more than one time */
 	source = copyStr(str);
 	for (i = 0, sliceCount = 1; source[i]; i++)
 		for (j = 0; delimiter[j]; j++)
@@ -67,7 +62,7 @@ char **slice(char *str, char *delimiter)
  *
  * Return: nothing
 */
-void interruption()
+void interruption(void)
 {
 	print(STDOUT_FILENO, "\n#cisfun$ ");
 	fflush(stdout);
