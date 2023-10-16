@@ -67,8 +67,9 @@ char **slice(char *str, char *delimiter)
  *
  * Return: nothing
 */
-void interruption()
+void interruption(int signum)
 {
+	(void)signum;
 	print(STDOUT_FILENO, "\n#cisfun$ ");
 	fflush(stdout);
 }

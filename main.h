@@ -49,7 +49,7 @@ void executeCommand(Command *command, char *shellName,
 /* Helpers */
 void print(int fd, char *message);
 char **slice(char *str, char *delimiter);
-void interruption(void);
+void interruption(int signum);
 
 /* String Manipulators */
 char *copyStr(char *source);
