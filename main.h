@@ -67,6 +67,10 @@ char *_getenv(const char *var, int *index);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
 
+/* Exit Handler */
+int exitHandler(char *shellName, size_t *commandID, Command *command);
+void illegalNumber(char *shellName, size_t *commandID, Command *command);
+
 /* String Tokenizer */
 char *_strtok(char *str, char *delimiter);
 
