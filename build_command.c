@@ -8,7 +8,8 @@
  * @commandID:pointer to the commandID variable in main()
  * it represents #commands done in the running shell
  *
- * Return: a pointer to a newly constructed command structure or NULL for errors
+ * Return: a pointer to a newly constructed command structure
+ * or NULL for errors
 */
 Command *buildCommand(char *readyStr, size_t *commandID)
 {
@@ -57,7 +58,6 @@ Command *buildCommand(char *readyStr, size_t *commandID)
  * (including the new line if it was the delimiter) and updates size if needed
  *
  * @string: pointer to the string where it should write what it reads
- * @size: pointer to the size of string
  * @stream: the stream it should read from
  *
  * Return: #characters read if it succeeds, -1 for errors

@@ -18,19 +18,19 @@ int setPath(char **argv);
 void executeCommand(Command *command, char *shellName,
 			size_t *commandID, int interactive)
 {
-	int i, result, exitStatus;
+	int i, builtInResult, exitStatus;
 
-	result = executeBuiltIns(command->argv);
-	if (result) /* 1: exit */
-		exitStatus = exitHandler(shellName, commandID, command);
-	if (result > -1) /* a built-in was found 1:exit, 0:another built-in */
+	builtInResult = executeBuiltIns(command->argv);
+	if (builtInResult) /* exit command */
+		exitStatus = getExitStatus(shellName, commandID, command);
+	if (builtInResult > -1) /* a built-in was found */
 	{
 		free(command->str);
 		for (i = 0; command->argv[i]; i++)
 			free(command->argv[i]);
 		free(command->argv);
 		free(command);
-		if (exitStatus > -1)
+		if (exitStatus > -1) /* valid exit status */
 			exit(exitStatus);
 		return;
 	}

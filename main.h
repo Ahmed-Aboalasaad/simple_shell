@@ -43,11 +43,12 @@ Command *buildCommand(char *readyStr, size_t *commandID);
 int buildScript(Script **s, size_t *commandCount);
 void executeCommand(Command *command, char *shellName,
 				size_t *commandID, int interactive);
+int getExitStatus(char *shellName, size_t *commandID, Command *command);
 
 /* Helpers */
 void print(int fd, char *message);
 char **slice(char *str, char *delimiter);
-void interruption(void);
+void interruption(int dummy);
 
 /* String Manipulators */
 char *copyStr(char *source);
@@ -59,15 +60,12 @@ int _strlen(const char *str);
 char *concatStr(char *s1, char *s2);
 int isPath(char *str);
 char contains(const char *str, char c);
+char isPositiveDigits(char *s);
 
 /* Environment */
 char *_getenv(const char *var, int *index);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
-
-/* Exit Handler */
-int exitHandler(char *shellName, size_t *commandID, Command *command);
-void illegalNumber(char *shellName, size_t *commandID, Command *command);
 
 /* String Tokenizer */
 char *_strtok(char *str, char *delimiter);

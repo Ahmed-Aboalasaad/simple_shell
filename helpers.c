@@ -26,19 +26,22 @@ void print(int fd, char *message)
 */
 char **slice(char *str, char *delimiter)
 {
-	int i, j, sliceCount;
-	char **result, *slice, *source;
+	int i = 0, sliceCount = 0;
+	char **result, *slice, *source, inToken;
 
 	/* Input Validation */
 	if (!str || !str[0] || !delimiter || !delimiter[0])
 		return (NULL);
 
-	/* Prepare the slices array */ /********** Error: counts the delimiters more than one time */
+	/* Build the slices array */
 	source = copyStr(str);
-	for (i = 0, sliceCount = 1; source[i]; i++)
-		for (j = 0; delimiter[j]; j++)
-			if (source[i] == delimiter[j])
-				sliceCount++;
+	for (inToken = 0; source[i]; i++)
+	{
+		if (!inToken && !contains(delimiter, source[i]))
+			sliceCount++, inToken = 1;
+		if (inToken && contains(delimiter, source[i]))
+			inToken = 0;
+	}
 
 	result = malloc(sizeof(*result) * (sliceCount + 1));
 	if (!result)
@@ -60,10 +63,12 @@ char **slice(char *str, char *delimiter)
 /**
  * interruption - prompts the user again when they hit Ctrl+C (iterruption)
  *
+ * @dummy: a dummy integer variable to suit the signal() syscall parameters
  * Return: nothing
 */
-void interruption(void)
+void interruption(int dummy)
 {
+	(void) dummy;
 	print(STDOUT_FILENO, "\n#cisfun$ ");
 	fflush(stdout);
 }

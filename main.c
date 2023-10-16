@@ -7,7 +7,7 @@
  * @av: argument vector
  * Return: 0 for success, non-zero value for errors
 */
-int main2(int ac, char **av)
+int main(int ac, char **av)
 {
 	/* #commands done in this session */
 	/* (incremented by 1 every time in input is read) */
@@ -45,19 +45,21 @@ int main2(int ac, char **av)
 	return (0);
 }
 
-int main(void)
-{
-	int i;
-
-	printf("==========================    Before    =================\n");
-	for (i = 0; __environ[i]; i++)
-		printf("%d) %s\n", i, __environ[i]);
-	
-	_setenv("SHELL", "new shell :)", 1);
-	printf("==========================    After     =================\n");
-	for (i = 0; __environ[i]; i++)
-		printf("%d) %s\n", i, __environ[i]);
-	printf("=========================================================\n");
-
-	return (0);
-}
+/*
+ *int main2(void)
+ *{
+ *	int i;
+ *
+ *	printf("==========================    Before    =================\n");
+ *	for (i = 0; __environ[i]; i++)
+ *		printf("%d) %s\n", i, __environ[i]);
+ *
+ *	_setenv("SHELL", "new shell :)", 1);
+ *	printf("==========================    After     =================\n");
+ *	for (i = 0; __environ[i]; i++)
+ *		printf("%d) %s\n", i, __environ[i]);
+ *	printf("=========================================================\n");
+ *
+ *	return (0);
+ *}
+ */

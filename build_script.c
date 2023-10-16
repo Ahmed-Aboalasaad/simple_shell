@@ -1,7 +1,7 @@
 #include "main.h"
 
 void buildScript2(char **lines,
-					  Script *script, size_t *commandID);
+					  Script * script, size_t *commandID);
 
 /**
  * buildScript - fills the fields of a script instance of the Script structure.
@@ -54,10 +54,9 @@ int buildScript(Script **s, size_t *commandID)
  * subScriptBuilder - extension for buildScript() as it exceeded 40 lines
  * and we need to satisfy betty :L)
  *
- * @n: #commands in the script
  * @lines: an array holding the command lines
  * @script: pointer to the script instance
- * @commandCount: command counter
+ * @commandID: command counter
  * Return: nothing;
 */
 void buildScript2(char **lines,
@@ -65,7 +64,7 @@ void buildScript2(char **lines,
 {
 	int i, commandCount;
 
-    for (commandCount = 0; lines[commandCount]; )
+	for (commandCount = 0; lines[commandCount]; )
 		commandCount++;
 	script->commands = malloc(sizeof(*script->commands) * (commandCount + 1));
 	if (!script->commands)

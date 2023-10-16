@@ -1,42 +1,42 @@
 #include "main.h"
 
-/* Prototypes */
-int exitHandler(char *shellName, size_t *commandID, Command *command);
 void illegalNumber(char *shellName, size_t *commandID, Command *command);
 
 /**
- * exitHandler - Handles exit command, if a status exists
- * @shellName: the shell name
- * @commandID: # of this command in the current session
- * @command: the command itself
+ * getExitStatus - exits the shell with the given status in command
+ * (if it's valid)
  *
- * Return: exit status or -1 if invalid
+ * @shellName: the shell name
+ * @commandID: #commands done in the running shell
+ * @command: the exit command (having the status)
+ *
+ * Return: exit status if it's valid or -1 if it's invalid
  */
-int exitHandler(char *shellName, size_t *commandID, Command *command)
+int getExitStatus(char *shellName, size_t *commandID, Command *command)
 {
-	ssize_t num = 0, i = 0;
-	char *exitStatus = command->argv[1];
+	ssize_t intStatus, i;
+	char *strStatus = command->argv[1];
 
-	if (exitStatus)
+	if (!strStatus) /* exit command without status */
+		return (0);
+	if (!strStatus[0]) /* command->argv[0] is an empty string */
+		exit(4);
+
+	if (!isPositiveDigits(strStatus)) /* letters or negative number */
 	{
-		for (i = 0; exitStatus[i]; i++)
-		{
-			if ((exitStatus[i] >= 48) && (exitStatus[i] <= 57))
-			{
-				num *= 10;
-				num += (exitStatus[i] - '0');
-			}
-			else
-			{
-				illegalNumber(shellName, commandID, command);
-				num = -1;
-				break;
-			}
-		}
-		if (num > 255)
-		num = num % 256;
+		illegalNumber(shellName, commandID, command);
+		return (-1);
 	}
-	return (num);
+
+	/* the string is positive digits.. turn it into a number */
+	for (i = intStatus = 0; strStatus[i]; i++)
+	{
+		intStatus *= 10;
+		intStatus += (strStatus[i] - '0');
+	}
+	if (intStatus > 255)
+	intStatus = intStatus % 256;
+	return (intStatus);
 }
 
 /**

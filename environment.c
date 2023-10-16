@@ -6,7 +6,7 @@ char isVarName(const char *prefix, const char *str);
 /**
  * _getenv - gets the value of an environment variable named var
  *
- * @var: the environment variable name
+ * @name: the environment variable name
  * @index: int pointer to write the index of the env var (if any) to
  * Return: pointer on the variable value
  * or NULL if there is no such variable
@@ -36,7 +36,7 @@ char *_getenv(const char *name, int *index)
 */
 int _setenv(const char *name, const char *value, int overwrite)
 {
-	char *oldValue,*newString, **newEnviron;
+	char *oldValue, *newString, **newEnviron;
 	int i, varCount, index;
 
 	/* Input Validation */
@@ -59,7 +59,7 @@ int _setenv(const char *name, const char *value, int overwrite)
 		__environ[index] = newString;
 		return (0);
 	}
-	
+
 	/* Adding a new Variable */
 	/* Build & Fill a new __environ[] array*/
 	for (varCount = 0; __environ[varCount]; )
@@ -85,7 +85,7 @@ int _setenv(const char *name, const char *value, int overwrite)
 }
 
 /**
- * buildVarStr - builds a "var=value" string ready to be added to __environ[]
+ * buildEnvStr - builds a "var=value" string ready to be added to __environ[]
  *
  * @name: the variable name
  * @value: the variable value
