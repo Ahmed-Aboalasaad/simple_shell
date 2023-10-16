@@ -21,8 +21,8 @@
  */
 typedef struct Command
 {
-	char *str;
-	char **argv;
+        char *str;
+        char **argv;
 } Command;
 
 /**
@@ -33,8 +33,8 @@ typedef struct Command
  */
 typedef struct Script
 {
-	char *str;
-	Command **commands;
+        char *str;
+        Command **commands;
 } Script;
 
 int isVarName(const char *name, const char *str);
@@ -44,7 +44,7 @@ long _getline(char **string, size_t *n, int stream);
 int buildCommand(Command **cmd, char *line, size_t *commandCount);
 int buildScript(Script **s, size_t *commandCount);
 void executeCommand(Command *command, char *shellName,
-					size_t *commandID, int interactive);
+                                        size_t *commandID, int interactive);
 
 /* Helpers */
 void print(int fd, char *message);
@@ -66,5 +66,8 @@ char contains(const char *str, char c);
 char *_getenv(const char *var, int *index);
 int _setenv(const char *name, const char *value, int overwrite);
 int _unsetenv(const char *name);
+
+/* String Tokenizer */
+char *_strtok(char *str, char *delimiter);
 
 #endif
