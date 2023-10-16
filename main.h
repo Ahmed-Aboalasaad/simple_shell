@@ -21,20 +21,20 @@
  */
 typedef struct Command
 {
-        char *str;
-        char **argv;
+	char *str;
+	char **argv;
 } Command;
 
 /**
- * struct Scr ipt- a complete script of one or more commands
+ * struct Script- a complete script of one or more commands
  * @str: all the script in one string
  * @commands: array of commands
  *
  */
 typedef struct Script
 {
-        char *str;
-        Command **commands;
+	char *str;
+	Command **commands;
 } Script;
 
 int isVarName(const char *name, const char *str);
@@ -44,12 +44,12 @@ long _getline(char **string, size_t *n, int stream);
 int buildCommand(Command **cmd, char *line, size_t *commandCount);
 int buildScript(Script **s, size_t *commandCount);
 void executeCommand(Command *command, char *shellName,
-                                        size_t *commandID, int interactive);
+				size_t *commandID, int interactive);
 
 /* Helpers */
 void print(int fd, char *message);
 char **slice(char *str, char *delimiter);
-void interruption();
+void interruption(void);
 
 /* String Manipulators */
 char *copyStr(char *source);
