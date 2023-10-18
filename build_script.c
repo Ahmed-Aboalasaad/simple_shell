@@ -57,7 +57,7 @@ int buildScript(Script **s, size_t *commandID)
  * @lines: an array holding the command lines
  * @script: pointer to the script instance
  * @commandID: command counter
- * Return: nothing;
+ * Return: nothing
 */
 void buildScript2(char **lines,
 					  Script *script, size_t *commandID)
