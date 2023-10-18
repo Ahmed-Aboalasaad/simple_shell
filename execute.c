@@ -153,7 +153,7 @@ void executeByPath(Command *command)
 }
 
 /**
- * executeBuiltIns - checks tha argv, and executes the required
+ * executeBuiltIns - checks the argv, and executes the required
  * built-in (if any)
  *
  * @argv: the argument vecotr
