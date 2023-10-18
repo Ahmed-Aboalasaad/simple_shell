@@ -125,8 +125,8 @@ int main(void)
     //     printf("%d: %s\n", i, strotk())
 
     char str[] = "This is some test\n";
-    char *slice = strdup(strtok(str, " \n"));
-	for (int i = 0; i < 4; slice = strdup(strtok(NULL, " \n")), i++)
+    char *slice = strdup(_strtok(str, " \n"));
+	for (int i = 0; i < 4; slice = strdup(_strtok(NULL, " \n")), i++)
 		printf("slice: %s\n", slice);
 
     return (0);

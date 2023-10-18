@@ -52,8 +52,8 @@ char **slice(char *str, char *delimiter)
 	result[sliceCount] = NULL;
 
 	/* Fill in the result array */
-	slice = copyStr(strtok(source, delimiter));
-	for (i = 0; i < sliceCount; slice = copyStr(strtok(NULL, delimiter)), i++)
+	slice = copyStr(_strtok(source, delimiter));
+	for (i = 0; i < sliceCount; slice = copyStr(_strtok(NULL, delimiter)), i++)
 		result[i] = slice;
 
 	free(source);
