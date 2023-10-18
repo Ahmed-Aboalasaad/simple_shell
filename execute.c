@@ -21,7 +21,7 @@ void executeCommand(Command *command, char *shellName,
 	int i, builtInResult, exitStatus;
 
 	builtInResult = executeBuiltIns(command->argv);
-	if (builtInResult) /* exit command */
+	if (builtInResult == 1) /* exit command */
 		exitStatus = getExitStatus(shellName, commandID, command);
 	if (builtInResult > -1) /* a built-in was found */
 	{
