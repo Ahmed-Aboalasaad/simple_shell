@@ -151,7 +151,7 @@ int _unsetenv(const char *name)
 }
 
 /**
- * isVarName - chekcks that "name" is equal to the part from the
+ * isVarName - checks that "name" is equal to the part from the
  * beginning of "str" till an '=' sign is found
  *
  * @name: the name to be checked if it's the variable name of str
