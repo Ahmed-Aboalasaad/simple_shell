@@ -38,6 +38,7 @@ typedef struct Script
 } Script;
 
 extern int previousExitValue;
+extern char **env;
 
 /* Main */
 long readLine(char **string, int stream);

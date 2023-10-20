@@ -18,10 +18,10 @@ int setPath(char **argv);
 void executeCommand(Command *command, char *shellName,
 					size_t *commandID, Script *script)
 {
-	int IsBuiltIn, childExitStatus;
+	int childExitStatus;
 
-	IsBuiltIn = executeBuiltIns(command,shellName, commandID, script);
-	if (IsBuiltIn) /* a built-in was found */
+	/* a built-in was found */
+	if (executeBuiltIns(command,shellName, commandID, script))
 		return;
 
 	if (setPath(command->argv)) /* no such accessible program exists */
@@ -139,7 +139,7 @@ int executeBuiltIns(Command *command, char *shellName,
 {
 	if (equal(command->argv[0], "exit"))
 	{
-		int exitStatus;
+		int exitStatus, i;
 
 		exitStatus = getExitStatus(shellName, commandID, command);
 		if (exitStatus == -1) /* invalid exit status */
@@ -148,6 +148,9 @@ int executeBuiltIns(Command *command, char *shellName,
 			freeScript(script);
 		else
 			freeCommand(command);
+		for (i = 0; env[i]; i++)
+			free(env[i]);
+		free(env);
 		exit(exitStatus);
 	}
 	else if (equal(command->argv[0], "setenv"))
@@ -158,6 +161,16 @@ int executeBuiltIns(Command *command, char *shellName,
 	else if (equal(command->argv[0], "unsetenv"))
 	{
 		_unsetenv(command->argv[1]);
+		return (1);
+	}
+	else if (equal(command->argv[0], "env") || equal(command->argv[0], "printenv"))
+	{
+		int i;
+		for (i = 0; env[i]; i++)
+		{
+			print(STDOUT_FILENO, env[i]);
+			print(STDOUT_FILENO, "\n");
+		}
 		return (1);
 	}
 	return (0);

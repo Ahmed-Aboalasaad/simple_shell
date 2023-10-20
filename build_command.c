@@ -13,6 +13,7 @@
  */
 Command *buildCommand(char *readyStr, size_t *commandID)
 {
+	int i;
 	long charCount;
 	Command *command;
 
@@ -41,6 +42,9 @@ Command *buildCommand(char *readyStr, size_t *commandID)
 	{
 		free(command);
 		print(STDOUT_FILENO, "\n");
+		for (i = 0; env[i]; i++)
+			free(env[i]);
+		free(env);
 		exit(EXIT_SUCCESS);
 	}
 	command->argv = slice(command->str, " \n");

@@ -2,6 +2,7 @@
 
 int main(int ac, char **av);
 int previousExitValue;
+char **env;
 
 void freeCommand(Command *command)
 {
@@ -55,14 +56,22 @@ int main(int ac, char **av)
 	Script *script;
 	Command *command;
 	int i;
-
+	
 	/* Initial Values */
 	(void)ac;
 	commandID = 0;
 	script = NULL;
 	command = NULL;
 	signal(SIGINT, interruption);
-
+	/* a local copy of the environment variables array */
+	for (i = 0; __environ[i]; )
+		i++;
+	env = malloc(sizeof(*env) * (i + 1));
+	if (!env)
+		exit(5);
+	env[i] = NULL;
+	for (i = 0; __environ[i]; i++)
+		env[i] = copyStr(__environ[i]);
 	/* Interactive mode */
 	if (isatty(STDIN_FILENO))
 	{
@@ -86,5 +95,8 @@ int main(int ac, char **av)
 		if (script)
 			freeScript(script);
 	}
+	for (i = 0; env[i]; i++)
+		free(env[i]);
+	free(env);
 	return (0);
 }
