@@ -31,10 +31,9 @@ char *_getenv(const char *name, int *index)
  *
  * @name: variable name
  * @value: variable value
- * @overwrite: modify the variable if it exists ?
  * Return: 0 on success, 1 for errors
 */
-int _setenv(const char *name, const char *value, int overwrite)
+int _setenv(const char *name, const char *value)
 {
 	char *oldValue, *newString, **newEnviron;
 	int i, varCount, index;
@@ -48,11 +47,6 @@ int _setenv(const char *name, const char *value, int overwrite)
 		return (1);
 	if (oldValue) /* There is an environment variable with this name */
 	{
-		if (!overwrite)
-		{
-			free(newString);
-			return (0);
-		}
 		/* update __environ[] */
 		/* substitue the old "var=value" string with the new one */
 		free(env[index]);

@@ -67,7 +67,7 @@ char isPositiveDigits(char *s);
 
 /* Environment */
 char *_getenv(const char *var, int *index);
-int _setenv(const char *name, const char *value, int overwrite);
+int _setenv(const char *name, const char *value);
 int _unsetenv(const char *name);
 
 /* String Tokenizer */
