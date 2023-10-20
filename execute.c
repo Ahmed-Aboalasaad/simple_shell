@@ -12,7 +12,7 @@ int setPath(char **argv);
  * @command: The command struct
  * @shellName: the name of the running shell
  * @commandID: the number of the command being builded right now
- * @interactive: interactive ?
+ * @script: The script struct
  * Return: void
  */
 void executeCommand(Command *command, char *shellName,
@@ -21,7 +21,7 @@ void executeCommand(Command *command, char *shellName,
 	int childExitStatus;
 
 	/* a built-in was found */
-	if (executeBuiltIns(command,shellName, commandID, script))
+	if (executeBuiltIns(command, shellName, commandID, script))
 		return;
 
 	if (setPath(command->argv)) /* no such accessible program exists */
@@ -32,7 +32,7 @@ void executeCommand(Command *command, char *shellName,
 	if (fork()) /* Parent */
 	{
 		wait(&childExitStatus);
-		previousExitValue = WIFEXITED(childExitStatus)? WEXITSTATUS(childExitStatus) : 0;
+		previousExitValue = WIFEXITED(childExitStatus) ? WEXITSTATUS(childExitStatus) : 0;
 	}
 	else /* Child */
 		executeByPath(command);
@@ -126,12 +126,15 @@ void executeByPath(Command *command)
 }
 
 /**
- * executeBuiltIns - checks the argv, and executes the required
- * built-in (if any)
+ * executeBuiltIns - checks if the command is built-in,
+ * if yes it gets excuted
  *
- * @argv: the argument vecotr
- * Return:
- * 0 if no built in commands were found
+ * @command: The command struct
+ * @shellName: the name of the running shell
+ * @commandID: the number of the command being builded right now
+ * @script: The script struct
+ *
+ * Return: 0 if no built in commands were found
  * 1 if a built in command was found
  */
 int executeBuiltIns(Command *command, char *shellName,
@@ -166,6 +169,7 @@ int executeBuiltIns(Command *command, char *shellName,
 	else if (equal(command->argv[0], "env") || equal(command->argv[0], "printenv"))
 	{
 		int i;
+
 		for (i = 0; env[i]; i++)
 		{
 			print(STDOUT_FILENO, env[i]);

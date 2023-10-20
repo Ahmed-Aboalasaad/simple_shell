@@ -4,13 +4,19 @@ int main(int ac, char **av);
 int previousExitValue;
 char **env;
 
+/**
+ * freeCommand - frees the command struct
+ * @command: the command struct to be freed
+ *
+ * Return: nothing
+ */
 void freeCommand(Command *command)
 {
 	int i;
 
 	if (!command)
 		return;
-	
+
 	if (command->str)
 	{
 		free(command->str);
@@ -26,6 +32,12 @@ void freeCommand(Command *command)
 	command = NULL;
 }
 
+/**
+ * freeScript - frees the script struct
+ * @script: the script struct to be freed
+ *
+ * Return: nothing
+ */
 void freeScript(Script *script)
 {
 	int i;
@@ -56,7 +68,7 @@ int main(int ac, char **av)
 	Script *script;
 	Command *command;
 	int i;
-	
+
 	/* Initial Values */
 	(void)ac;
 	commandID = 0;
@@ -88,7 +100,7 @@ int main(int ac, char **av)
 	else /* non-interactive mode */
 	{
 		if (buildScript(&script, &commandID)) /* Empty Script */
-			return (0); 
+			return (0);
 		for (i = 0; script->commands[i]; i++)
 			if (script->commands[i]->argv[0] != NULL)
 				executeCommand(script->commands[i], av[0], &commandID, script);
