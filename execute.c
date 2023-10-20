@@ -32,7 +32,10 @@ void executeCommand(Command *command, char *shellName,
 	if (fork()) /* Parent */
 	{
 		wait(&childExitStatus);
-		previousExitValue = WIFEXITED(childExitStatus) ? WEXITSTATUS(childExitStatus) : 0;
+		if (WIFEXITED(childExitStatus))
+			previousExitValue = WEXITSTATUS(childExitStatus);
+		else
+			previousExitValue = 0;
 	}
 	else /* Child */
 		executeByPath(command);
@@ -166,7 +169,7 @@ int executeBuiltIns(Command *command, char *shellName,
 		_unsetenv(command->argv[1]);
 		return (1);
 	}
-	else if (equal(command->argv[0], "env") || equal(command->argv[0], "printenv"))
+	else if (equal(command->argv[0], "env"))
 	{
 		int i;
 

@@ -44,7 +44,8 @@ extern char **env;
 long readLine(char **string, int stream);
 Command *buildCommand(char *readyStr, size_t *commandID);
 int buildScript(Script **s, size_t *commandCount);
-void executeCommand(Command *command, char *shellName, size_t *commandID, Script *script);
+void executeCommand(Command *command, char *shellName,
+					size_t *commandID, Script *script);
 int getExitStatus(char *shellName, size_t *commandID, Command *command);
 
 /* Helpers */
