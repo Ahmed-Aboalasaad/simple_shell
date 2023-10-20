@@ -1,12 +1,75 @@
 #include "main.h"
 
+void freeCommand(Command *command)
+{
+	if (command)
+	{
+		if (command->str)
+		{
+			free(command->str);
+			command->str = NULL;
+		}
+		if (command->argv)
+		{
+			int i;
+
+			for (i = 0; command->argv[i]; i++)
+			{
+				free(command->argv[i]);
+				command->argv[i] = NULL;
+			}
+			free(command->argv);
+			command->argv = NULL;
+		}
+		free(command);
+		command = NULL;
+	}
+}
+
+void freeargv(Command *command)
+{
+	if (command)
+	{
+		if (command->argv)
+		{
+			int i;
+
+			for (i = 0; command->argv[i]; i++)
+			{
+				free(command->argv[i]);
+				command->argv[i] = NULL;
+			}
+			free(command->argv);
+			command->argv = NULL;
+		}
+		free(command);
+		command = NULL;
+	}
+}
+
+void freeScript(Script *script)
+{
+	if (script)
+	{
+		if (script->commands)
+		{
+			int i;
+
+			for (i = 0; script->commands[i]; i++)
+				freeargv(script->commands[i]);
+		}
+		free(script);
+		script = NULL;
+	}
+}
+
 /**
  * main - simple shell
  *
  * @ac: argument count
  * @av: argument vector
  * Return: 0 for success, non-zero value for errors
-*/
+ */
 int main(int ac, char **av)
 {
 	/* #commands done in this session */
@@ -30,20 +93,32 @@ int main(int ac, char **av)
 		{
 			print(STDOUT_FILENO, "#cisfun$ ");
 			command = buildCommand(NULL, &commandID);
-			if (command->str[0] == '\n') /* empty command: ("\n") */
-				continue;
-			executeCommand(command, av[0], &commandID, 1);
+			if (command->argv[0])
+				executeCommand(command, av[0], &commandID, NULL);
+			if (command)
+				freeCommand(command);
 		}
 	}
 	else /* non-interactive mode */
 	{
 		if (buildScript(&script, &commandID)) /* Empty Script */
-			return (0);
+			return (0); 
 		for (i = 0; script->commands[i]; i++)
-			executeCommand(script->commands[i], av[0], &commandID, 0);
+		{
+			/*print(1, script->commands[i]->str);*/
+			/*if (script->commands[i]->str[0] != '\n' && script->commands[i]->argv[0] != NULL)*/
+			/*if (script->commands[i]->str)*/
+				/*print(1, script->commands[i]->str);*/
+			if (script->commands[i]->argv[0] != NULL)
+				executeCommand(script->commands[i], av[0], &commandID, script);
+		}
+		if (script)
+			freeScript(script);
 	}
 	return (0);
 }
+/*freeCommand(script->commands[i]);*/
+/*printf("\nHERE: %s\n", script->commands[0]->argv[0]);*/
 
 /*
  *int main2(void)

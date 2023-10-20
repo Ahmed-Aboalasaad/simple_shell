@@ -23,6 +23,7 @@ int buildScript(Script **s, size_t *commandID)
 	if (!*s)
 		exit(EXIT_FAILURE);
 	script = *s;
+	script->str = NULL;
 
 	/* Read the script (many lines) */ /* needs fixing (reading line by line) */
 	charCount = readLine(&script->str, STDIN_FILENO);

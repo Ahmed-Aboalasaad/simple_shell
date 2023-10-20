@@ -3,7 +3,8 @@
 /* Prototypes */
 void notFound(char *shellName, size_t *commandID, Command *command);
 void executeByPath(Command *command);
-int executeBuiltIns(char **argv);
+int executeBuiltIns(Command *command, char *shellName,
+								size_t *commandID, Script *script);
 int setPath(char **argv);
 
 /**
@@ -16,24 +17,14 @@ int setPath(char **argv);
  * Return: void
  */
 void executeCommand(Command *command, char *shellName,
-			size_t *commandID, int interactive)
+					size_t *commandID, Script *script)
 {
-	int i, builtInResult, exitStatus;
+	int builtInResult;
 
-	builtInResult = executeBuiltIns(command->argv);
-	if (builtInResult == 1) /* exit command */
-		exitStatus = getExitStatus(shellName, commandID, command);
-	if (builtInResult > -1) /* a built-in was found */
-	{
-		free(command->str);
-		for (i = 0; command->argv[i]; i++)
-			free(command->argv[i]);
-		free(command->argv);
-		free(command);
-		if (exitStatus > -1) /* valid exit status */
-			exit(exitStatus);
+	builtInResult = executeBuiltIns(command,shellName, commandID, script);
+	if (builtInResult == 1) /* a built-in was found */
 		return;
-	}
+
 	if (setPath(command->argv)) /* no such accessible program exists */
 	{
 		notFound(shellName, commandID, command);
@@ -42,12 +33,10 @@ void executeCommand(Command *command, char *shellName,
 	if (fork()) /* Parent */
 	{
 		wait(NULL);
-		if (interactive) /*********** a problem hereeeee */
-			free(command->str);
-		for (i = 0; command->argv[i]; i++)
-			free(command->argv[i]);
-		free(command->argv);
-		free(command);
+		/*if (interactive) ********** a problem hereeeee */
+		/*freeCommand(command); necessary here? i think in main is good*/
+		/*else
+			freeScript(sc)*/
 	}
 	else /* Child */
 		executeByPath(command);
@@ -63,7 +52,6 @@ void executeCommand(Command *command, char *shellName,
  */
 void notFound(char *shellName, size_t *commandID, Command *command)
 {
-	int i;
 	char *str;
 
 	print(STDERR_FILENO, shellName);
@@ -73,12 +61,7 @@ void notFound(char *shellName, size_t *commandID, Command *command)
 	print(STDERR_FILENO, ": ");
 	print(STDERR_FILENO, command->argv[0]);
 	print(STDERR_FILENO, ": not found\n");
-	for (i = 0; command->argv[i]; i++)
-		free(command->argv[i]);
-	free(command->argv);
-	free(command->str);
 	free(str);
-	free(command);
 }
 
 /**
@@ -139,17 +122,11 @@ int setPath(char **argv)
  */
 void executeByPath(Command *command)
 {
-	int i;
-
 	execve(command->argv[0], command->argv, __environ);
 
 	/* Contunuing after execve() means an error occurred */
-	free(command->str);
-	for (i = 0; command->argv[i]; i++)
-		free(command->argv[i]);
-	free(command->argv);
-	free(command);
-	exit(EXIT_FAILURE);
+	freeCommand(command);
+	exit(EXIT_FAILURE); /* what about script freeing?*/
 }
 
 /**
@@ -162,27 +139,37 @@ void executeByPath(Command *command)
  * 1 if an exit built in was found
  * -1 if no built-in was found
  */
-int executeBuiltIns(char **argv)
+int executeBuiltIns(Command *command, char *shellName,
+					size_t *commandID, Script *script)
 {
 	/* Check for built-Ins*/
-	if (equal(argv[0], "exit"))
+	if (equal(command->argv[0], "exit"))
 	{
+		int exitStatus;
+
+		exitStatus = getExitStatus(shellName, commandID, command);
+		if (script)
+			freeScript(script);
+		else
+			freeCommand(command);
+		if (exitStatus > -1) /* valid exit status */
+			exit(exitStatus);
 		return (1);
 	}
-	else if (equal(argv[0], "setenv"))
+	else if (equal(command->argv[0], "setenv"))
 	{
-		_setenv(argv[1], argv[2], equal(argv[3], "1"));
-		return (0);
+		_setenv(command->argv[1], command->argv[2], equal(command->argv[3], "1"));
+		return (1);
 	}
-	else if (equal(argv[0], "unsetenv"))
+	else if (equal(command->argv[0], "unsetenv"))
 	{
-		_unsetenv(argv[1]);
-		return (0);
+		_unsetenv(command->argv[1]);
+		return (1);
 	}
 	/*
-	 * else if (equal(argv[0], "cd"))
+	 * else if (equal(command->argv], "cd"))
 	 * {
-	 *      _cd(argv[1]);
+	 *      _cd(command->argv);
 	 *      return (0);
 	 * }
 	 */

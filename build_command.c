@@ -10,7 +10,7 @@
  *
  * Return: a pointer to a newly constructed command structure
  * or NULL for errors
-*/
+ */
 Command *buildCommand(char *readyStr, size_t *commandID)
 {
 	long charCount;
@@ -43,12 +43,6 @@ Command *buildCommand(char *readyStr, size_t *commandID)
 		print(STDOUT_FILENO, "\n");
 		exit(EXIT_SUCCESS);
 	}
-	if (command->str[0] == '\n') /* Empty Command ("\n") */
-	{
-		free(command->str);
-		free(command);
-		return (command);
-	}
 	command->argv = slice(command->str, " \n");
 	return (command);
 }
@@ -61,7 +55,7 @@ Command *buildCommand(char *readyStr, size_t *commandID)
  * @stream: the stream it should read from
  *
  * Return: #characters read if it succeeds, -1 for errors
-*/
+ */
 long readLine(char **string, int stream)
 {
 	char *buffer, *tmp;
