@@ -61,4 +61,5 @@ void illegalNumber(char *shellName, size_t *commandID, Command *command)
 	print(STDERR_FILENO, command->argv[1]);
 	print(STDERR_FILENO, "\n");
 	free(str);
+	previousExitValue = 2;
 }
