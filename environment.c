@@ -15,13 +15,13 @@ char *_getenv(const char *name, int *index)
 {
 	int i, j;
 
-	for (i = 0; __environ[i]; i++)
-		if (isVarName(name, __environ[i]))
+	for (i = 0; env[i]; i++)
+		if (isVarName(name, env[i]))
 		{
 			*index = i;
-			for (j = 0; __environ[i][j] != '=';)
+			for (j = 0; env[i][j] != '=';)
 				j++;
-			return (&__environ[i][j + 1]);
+			return (&env[i][j + 1]);
 		}
 	return (NULL);
 }
@@ -55,14 +55,14 @@ int _setenv(const char *name, const char *value, int overwrite)
 		}
 		/* update __environ[] */
 		/* substitue the old "var=value" string with the new one */
-		free(__environ[index]); /* Causes invalid free() */
-		__environ[index] = newString;
+		free(env[index]);
+		env[index] = newString;
 		return (0);
 	}
 
 	/* Adding a new Variable */
-	/* Build & Fill a new __environ[] array*/
-	for (varCount = 0; __environ[varCount]; )
+	/* Build & Fill a new env[] array*/
+	for (varCount = 0; env[varCount]; )
 		varCount++;
 	newEnviron = malloc(sizeof(*newEnviron) * (varCount + 2));
 	if (!newEnviron)
@@ -71,16 +71,14 @@ int _setenv(const char *name, const char *value, int overwrite)
 		return (1);
 	}
 	newEnviron[varCount + 1] = NULL;
+	newEnviron[varCount] = newString;
 	for (i = 0; i < varCount; i++)
-		newEnviron[i] = __environ[i];
-	newEnviron[i] = newString;
+		newEnviron[i] = copyStr(env[i]);
 	/* Substitue the old environ with the new one */
-	for (i = 0; __environ[i]; i++)
-	{
-		printf("env[%d] = \"%s\"\n", i, __environ[i]);
-		free(__environ[i]);
-	}
-	__environ = newEnviron;
+	for (i = 0; env[i]; i++)
+		free(env[i]);
+	free(env);
+	env = newEnviron;
 	return (0);
 }
 
@@ -130,7 +128,7 @@ int _unsetenv(const char *name)
 		return (0);
 
 	/* Build a new environ[] array */
-	for (varNum = 0; __environ[varNum]; )
+	for (varNum = 0; env[varNum]; )
 		varNum++;
 	newEnviron = malloc(sizeof(*newEnviron) * varNum);
 	if (!newEnviron)
@@ -140,13 +138,13 @@ int _unsetenv(const char *name)
 	/* Fill it */
 	for (i = j = 0; i < varNum; i++)
 		if (j != index)
-			newEnviron[i] = copyStr(__environ[j++]);
+			newEnviron[i] = copyStr(env[j++]);
 
 	/* Substitute the old __environ with the new one */
-	for (i = 0; __environ[i]; i++)
-		free(__environ[i]);
+	for (i = 0; env[i]; i++)
+		free(env[i]);
 
-	__environ = newEnviron;
+	env = newEnviron;
 	return (0);
 }
 
@@ -161,7 +159,7 @@ int _unsetenv(const char *name)
 */
 char isVarName(const char *name, const char *envStr)
 {
-	int i, varLen; /* varLen is the length of the variable name in str */
+	int i, varLen; /* varLen is the length of the variable name in envStr */
 	char strIsValid; /* a flag to be raised if str has an = character */
 
 	/* Make sure str is valid & the var names has the same length */
