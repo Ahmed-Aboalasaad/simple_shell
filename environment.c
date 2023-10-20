@@ -137,13 +137,16 @@ int _unsetenv(const char *name)
 
 	/* Fill it */
 	for (i = j = 0; i < varNum; i++)
-		if (j != index)
-			newEnviron[i] = copyStr(env[j++]);
+		if (i != index)
+		{
+			newEnviron[j] = copyStr(env[i]);
+			j++;
+		}
 
 	/* Substitute the old __environ with the new one */
 	for (i = 0; env[i]; i++)
 		free(env[i]);
-
+	free(env);
 	env = newEnviron;
 	return (0);
 }
