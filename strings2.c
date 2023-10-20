@@ -27,13 +27,8 @@ int _strlen(const char *str)
  */
 char *concatStr(char *s1, char *s2)
 {
-	int i, len1, len2;
+	int i, len1 = _strlen(s1), len2 = _strlen(s2);
 	char *result;
-
-	for (len1 = 0; s1[len1]; )
-		len1++;
-	for (len2 = 0; s2[len2]; )
-		len2++;
 
 	result = malloc(sizeof(*result) * (len1 + len2 + 1));
 	if (!result)

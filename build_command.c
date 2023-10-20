@@ -80,6 +80,7 @@ long readLine(char **string, int stream)
 		}
 		buffer[charCount] = '\0';
 		tmp = *string;
+		fflush(stdout);
 		*string = concatStr(*string, buffer);
 		free(tmp);
 		if (charCount < BUFFER_SIZE - 1)

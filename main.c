@@ -49,18 +49,16 @@ void freeargv(Command *command)
 
 void freeScript(Script *script)
 {
-	if (script)
+	free(script->str);
+	if (script->commands)
 	{
-		if (script->commands)
-		{
-			int i;
-
-			for (i = 0; script->commands[i]; i++)
-				freeargv(script->commands[i]);
-		}
-		free(script);
-		script = NULL;
+		int i;
+		for (i = 0; script->commands[i]; i++)
+			freeargv(script->commands[i]);
+		free(script->commands);
 	}
+	free(script);
+	script = NULL;
 }
 
 /**
