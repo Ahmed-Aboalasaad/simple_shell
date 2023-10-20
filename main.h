@@ -37,6 +37,8 @@ typedef struct Script
 	Command **commands;
 } Script;
 
+extern int previousExitValue;
+
 /* Main */
 long readLine(char **string, int stream);
 Command *buildCommand(char *readyStr, size_t *commandID);

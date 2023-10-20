@@ -60,9 +60,7 @@ long readLine(char **string, int stream)
 {
 	char *buffer, *tmp;
 	int charCount, bufferedBefore;
-
-	if (*string)
-		free(*string);
+	
 	*string = malloc(1), *string[0] = '\0', buffer = malloc(BUFFER_SIZE);
 
 	for (bufferedBefore = 0; 1; bufferedBefore = 1)

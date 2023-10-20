@@ -18,7 +18,7 @@ int getExitStatus(char *shellName, size_t *commandID, Command *command)
 	char *strStatus = command->argv[1];
 
 	if (!strStatus) /* exit command without status */
-		return (0);
+		return (previousExitValue);
 	if (!strStatus[0]) /* command->argv[0] is an empty string */
 		exit(4);
 

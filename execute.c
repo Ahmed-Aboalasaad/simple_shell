@@ -1,6 +1,5 @@
 #include "main.h"
 
-/* Prototypes */
 void notFound(char *shellName, size_t *commandID, Command *command);
 void executeByPath(Command *command);
 int executeBuiltIns(Command *command, char *shellName,
@@ -19,10 +18,10 @@ int setPath(char **argv);
 void executeCommand(Command *command, char *shellName,
 					size_t *commandID, Script *script)
 {
-	int builtInResult;
+	int IsBuiltIn, childExitStatus;
 
-	builtInResult = executeBuiltIns(command,shellName, commandID, script);
-	if (builtInResult == 1) /* a built-in was found */
+	IsBuiltIn = executeBuiltIns(command,shellName, commandID, script);
+	if (IsBuiltIn) /* a built-in was found */
 		return;
 
 	if (setPath(command->argv)) /* no such accessible program exists */
@@ -32,11 +31,8 @@ void executeCommand(Command *command, char *shellName,
 	}
 	if (fork()) /* Parent */
 	{
-		wait(NULL);
-		/*if (interactive) ********** a problem hereeeee */
-		/*freeCommand(command); necessary here? i think in main is good*/
-		/*else
-			freeScript(sc)*/
+		wait(&childExitStatus);
+		previousExitValue = WIFEXITED(childExitStatus)? WEXITSTATUS(childExitStatus) : 0;
 	}
 	else /* Child */
 		executeByPath(command);
@@ -135,26 +131,24 @@ void executeByPath(Command *command)
  *
  * @argv: the argument vecotr
  * Return:
- * 0 if a non-exit built in was found
- * 1 if an exit built in was found
- * -1 if no built-in was found
+ * 0 if no built in commands were found
+ * 1 if a built in command was found
  */
 int executeBuiltIns(Command *command, char *shellName,
 					size_t *commandID, Script *script)
 {
-	/* Check for built-Ins*/
 	if (equal(command->argv[0], "exit"))
 	{
 		int exitStatus;
 
 		exitStatus = getExitStatus(shellName, commandID, command);
+		if (exitStatus == -1) /* invalid exit status */
+			return (1); /* and the script/command will be freed in main() */
 		if (script)
 			freeScript(script);
 		else
 			freeCommand(command);
-		if (exitStatus > -1) /* valid exit status */
-			exit(exitStatus);
-		return (1);
+		exit(exitStatus);
 	}
 	else if (equal(command->argv[0], "setenv"))
 	{
@@ -166,12 +160,5 @@ int executeBuiltIns(Command *command, char *shellName,
 		_unsetenv(command->argv[1]);
 		return (1);
 	}
-	/*
-	 * else if (equal(command->argv], "cd"))
-	 * {
-	 *      _cd(command->argv);
-	 *      return (0);
-	 * }
-	 */
-	return (-1);
+	return (0);
 }
