@@ -98,5 +98,6 @@ int main(int ac, char **av)
 	for (i = 0; env[i]; i++)
 		free(env[i]);
 	free(env);
+	exit(previousExitValue);
 	return (0);
 }
