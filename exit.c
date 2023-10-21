@@ -6,8 +6,6 @@ void illegalNumber(Command *command);
  * getExitStatus - exits the shell with the given status in command
  * (if it's valid)
  *
- * @shellName: the shell name
- * @commandID: #commands done in the running shell
  * @command: the exit command (having the status)
  *
  * Return: exit status if it's valid or -1 if it's invalid
@@ -41,8 +39,6 @@ int getExitStatus(Command *command)
 
 /**
  * illegalNumber - prints error message when an invalid exit code is provided
- * @shellName: the shell name
- * @commandID: #of this command in the current session
  * @command: the command itself
  *
  * Return: nothing
