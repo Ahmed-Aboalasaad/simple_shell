@@ -134,10 +134,10 @@ void executeByPath(Command *command)
  */
 int executeBuiltIns(Command *command, Script *script)
 {
+	int exitStatus, i;
+
 	if (equal(command->argv[0], "exit"))
 	{
-		int exitStatus, i;
-
 		exitStatus = getExitStatus(command);
 		if (exitStatus == -1) /* invalid exit status */
 			return (1); /* and the script/command will be freed in main() */
@@ -163,13 +163,13 @@ int executeBuiltIns(Command *command, Script *script)
 	}
 	else if (equal(command->argv[0], "env"))
 	{
-		int i;
-
 		for (i = 0; env[i]; i++)
-		{
-			print(STDOUT_FILENO, env[i]);
-			print(STDOUT_FILENO, "\n");
-		}
+			print(STDOUT_FILENO, concatStr(env[i], "\n"));
+		return (1);
+	}
+	else if (equal(command->argv[0], "cd"))
+	{
+		cd(command);
 		return (1);
 	}
 	return (0);

@@ -48,6 +48,7 @@ Command *buildCommand(char *readyStr);
 int buildScript(Script **s);
 void executeCommand(Command *command, Script *script);
 int getExitStatus(Command *command);
+void cd(Command *command);
 
 /* Helpers */
 void print(int fd, char *message);
