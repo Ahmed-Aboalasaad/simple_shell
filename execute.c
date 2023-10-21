@@ -164,7 +164,10 @@ int executeBuiltIns(Command *command, Script *script)
 	else if (equal(command->argv[0], "env"))
 	{
 		for (i = 0; env[i]; i++)
-			print(STDOUT_FILENO, concatStr(env[i], "\n"));
+		{
+			print(STDOUT_FILENO, env[i]);
+			print(STDOUT_FILENO, "\n");
+		}
 		return (1);
 	}
 	else if (equal(command->argv[0], "cd"))
