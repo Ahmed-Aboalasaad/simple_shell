@@ -11,14 +11,14 @@
  * Return: a pointer to a newly constructed command structure
  * or NULL for errors
  */
-Command *buildCommand(char *readyStr, size_t *commandID)
+Command *buildCommand(char *readyStr)
 {
 	int i;
 	long charCount;
 	Command *command;
 
 	/* Allocation */
-	(*commandID)++;
+	commandID++;
 	command = malloc(sizeof(*command));
 	if (!command)
 		exit(EXIT_FAILURE);

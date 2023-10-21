@@ -72,3 +72,52 @@ void interruption(int dummy)
 	print(STDOUT_FILENO, "\n#cisfun$ ");
 	fflush(stdout);
 }
+
+/**
+ * freeCommand - frees the command struct
+ * @command: the command struct to be freed
+ *
+ * Return: nothing
+ */
+void freeCommand(Command *command)
+{
+	int i;
+
+	if (!command)
+		return;
+
+	if (command->str)
+	{
+		free(command->str);
+		command->str = NULL;
+	}
+	if (command->argv)
+	{
+		for (i = 0; command->argv[i]; i++)
+			free(command->argv[i]);
+		free(command->argv);
+	}
+	free(command);
+	command = NULL;
+}
+
+/**
+ * freeScript - frees the script struct
+ * @script: the script struct to be freed
+ *
+ * Return: nothing
+ */
+void freeScript(Script *script)
+{
+	int i;
+
+	free(script->str);
+	if (script->commands)
+	{
+		for (i = 0; script->commands[i]; i++)
+			freeCommand(script->commands[i]);
+		free(script->commands);
+	}
+	free(script);
+	script = NULL;
+}

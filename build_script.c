@@ -1,7 +1,6 @@
 #include "main.h"
 
-void buildScript2(char **lines,
-					  Script * script, size_t *commandID);
+void buildScript2(char **lines, Script * script);
 
 /**
  * buildScript - fills the fields of a script instance of the Script structure.
@@ -12,7 +11,7 @@ void buildScript2(char **lines,
  * @commandID: command counter
  * Return: 0 for success, 1 if an empty script was provided
  */
-int buildScript(Script **s, size_t *commandID)
+int buildScript(Script **s)
 {
 	int charCount;
 	char **lines;
@@ -47,7 +46,7 @@ int buildScript(Script **s, size_t *commandID)
 		free(script);
 		exit(EXIT_FAILURE);
 	}
-	buildScript2(lines, script, commandID);
+	buildScript2(lines, script);
 
 	return (0);
 }
@@ -61,8 +60,7 @@ int buildScript(Script **s, size_t *commandID)
  * @commandID: command counter
  * Return: nothing
 */
-void buildScript2(char **lines,
-					  Script *script, size_t *commandID)
+void buildScript2(char **lines, Script *script)
 {
 	int i, commandCount;
 
@@ -81,7 +79,7 @@ void buildScript2(char **lines,
 	script->commands[commandCount] = NULL;
 
 	for (i = 0; i < commandCount; i++)
-		script->commands[i] =  buildCommand(copyStr(lines[i]), commandID);
+		script->commands[i] =  buildCommand(copyStr(lines[i]));
 
 	for (i = 0; lines[i]; i++)
 		free(lines[i]);

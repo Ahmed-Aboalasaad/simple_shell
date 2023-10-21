@@ -1,5 +1,4 @@
 #include "main.h"
-#include <stdlib.h>
 
 /**
  * _strtok - splits a given string into tokens separated by given delimiter

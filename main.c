@@ -2,56 +2,9 @@
 
 int main(int ac, char **av);
 int previousExitValue;
+char *shellName;
 char **env;
-
-/**
- * freeCommand - frees the command struct
- * @command: the command struct to be freed
- *
- * Return: nothing
- */
-void freeCommand(Command *command)
-{
-	int i;
-
-	if (!command)
-		return;
-
-	if (command->str)
-	{
-		free(command->str);
-		command->str = NULL;
-	}
-	if (command->argv)
-	{
-		for (i = 0; command->argv[i]; i++)
-			free(command->argv[i]);
-		free(command->argv);
-	}
-	free(command);
-	command = NULL;
-}
-
-/**
- * freeScript - frees the script struct
- * @script: the script struct to be freed
- *
- * Return: nothing
- */
-void freeScript(Script *script)
-{
-	int i;
-
-	free(script->str);
-	if (script->commands)
-	{
-		for (i = 0; script->commands[i]; i++)
-			freeCommand(script->commands[i]);
-		free(script->commands);
-	}
-	free(script);
-	script = NULL;
-}
+size_t commandID;
 
 /**
  * main - simple shell
@@ -64,7 +17,6 @@ int main(int ac, char **av)
 {
 	/* #commands done in this session */
 	/* (incremented by 1 every time in input is read) */
-	size_t commandID;
 	Script *script;
 	Command *command;
 	int i;
@@ -90,20 +42,20 @@ int main(int ac, char **av)
 		while (1)
 		{
 			print(STDOUT_FILENO, "#cisfun$ ");
-			command = buildCommand(NULL, &commandID);
+			command = buildCommand(NULL);
 			if (command->argv[0])
-				executeCommand(command, av[0], &commandID, NULL);
+				executeCommand(command, NULL);
 			if (command)
 				freeCommand(command);
 		}
 	}
 	else /* non-interactive mode */
 	{
-		if (buildScript(&script, &commandID)) /* Empty Script */
-			return (0);
+		if (buildScript(&script))
+			return (0); /* Empty Script */
 		for (i = 0; script->commands[i]; i++)
 			if (script->commands[i]->argv[0] != NULL)
-				executeCommand(script->commands[i], av[0], &commandID, script);
+				executeCommand(script->commands[i], script);
 		if (script)
 			freeScript(script);
 	}

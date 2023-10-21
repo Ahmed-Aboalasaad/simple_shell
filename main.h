@@ -39,13 +39,14 @@ typedef struct Script
 
 extern int previousExitValue;
 extern char **env;
+extern size_t commandID;
+extern char *shellName;
 
 /* Main */
 long readLine(char **string, int stream);
-Command *buildCommand(char *readyStr, size_t *commandID);
-int buildScript(Script **s, size_t *commandCount);
-void executeCommand(Command *command, char *shellName,
-					size_t *commandID, Script *script);
+Command *buildCommand(char *readyStr);
+int buildScript(Script **s);
+void executeCommand(Command *command, Script *script);
 int getExitStatus(char *shellName, size_t *commandID, Command *command);
 
 /* Helpers */

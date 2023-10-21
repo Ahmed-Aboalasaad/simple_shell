@@ -1,9 +1,8 @@
 #include "main.h"
 
-void notFound(char *shellName, size_t *commandID, Command *command);
+void notFound(Command *command);
 void executeByPath(Command *command);
-int executeBuiltIns(Command *command, char *shellName,
-								size_t *commandID, Script *script);
+int executeBuiltIns(Command *command, Script *script);
 int setPath(char **argv);
 
 /**
@@ -15,18 +14,17 @@ int setPath(char **argv);
  * @script: The script struct
  * Return: void
  */
-void executeCommand(Command *command, char *shellName,
-					size_t *commandID, Script *script)
+void executeCommand(Command *command, Script *script)
 {
 	int childExitStatus;
 
 	/* a built-in was found */
-	if (executeBuiltIns(command, shellName, commandID, script))
+	if (executeBuiltIns(command, script))
 		return;
 
 	if (setPath(command->argv)) /* no such accessible program exists */
 	{
-		notFound(shellName, commandID, command);
+		notFound(command);
 		return;
 	}
 	if (fork()) /* Parent */
@@ -49,13 +47,13 @@ void executeCommand(Command *command, char *shellName,
  * @command: the command itself
  * Return: nothing
  */
-void notFound(char *shellName, size_t *commandID, Command *command)
+void notFound(Command *command)
 {
 	char *str;
 
 	print(STDERR_FILENO, shellName);
 	print(STDERR_FILENO, ": ");
-	str = intToStr(*commandID);
+	str = intToStr(commandID);
 	print(STDERR_FILENO, str);
 	print(STDERR_FILENO, ": ");
 	print(STDERR_FILENO, command->argv[0]);
@@ -140,8 +138,7 @@ void executeByPath(Command *command)
  * Return: 0 if no built in commands were found
  * 1 if a built in command was found
  */
-int executeBuiltIns(Command *command, char *shellName,
-					size_t *commandID, Script *script)
+int executeBuiltIns(Command *command, Script *script)
 {
 	if (equal(command->argv[0], "exit"))
 	{
