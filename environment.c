@@ -45,9 +45,9 @@ int _setenv(const char *name, const char *value)
 	newString = buildEnvStr(name, value), oldValue = _getenv(name, &index);
 	if (!newString)
 		return (1);
-	if (oldValue) /* There is an environment variable with this name */
+	/* if there is an environment variable with this name, update it */
+	if (oldValue)
 	{
-		/* update __environ[] */
 		/* substitue the old "var=value" string with the new one */
 		free(env[index]);
 		env[index] = newString;
