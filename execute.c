@@ -161,7 +161,8 @@ int executeBuiltIns(Command *command, char *shellName,
 	}
 	else if (equal(command->argv[0], "setenv"))
 	{
-		_setenv(command->argv[1], command->argv[2]);
+		if ((command->argv[1] && command->argv[2]))
+			_setenv(command->argv[1], command->argv[2]);
 		return (1);
 	}
 	else if (equal(command->argv[0], "unsetenv"))
