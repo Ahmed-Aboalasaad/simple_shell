@@ -138,7 +138,7 @@ int executeBuiltIns(Command *command, Script *script)
 	{
 		int exitStatus, i;
 
-		exitStatus = getExitStatus(shellName, commandID, command);
+		exitStatus = getExitStatus(command);
 		if (exitStatus == -1) /* invalid exit status */
 			return (1); /* and the script/command will be freed in main() */
 		if (script)

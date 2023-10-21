@@ -47,7 +47,7 @@ long readLine(char **string, int stream);
 Command *buildCommand(char *readyStr);
 int buildScript(Script **s);
 void executeCommand(Command *command, Script *script);
-int getExitStatus(char *shellName, size_t *commandID, Command *command);
+int getExitStatus(Command *command);
 
 /* Helpers */
 void print(int fd, char *message);

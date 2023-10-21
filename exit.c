@@ -1,6 +1,6 @@
 #include "main.h"
 
-void illegalNumber(char *shellName, size_t *commandID, Command *command);
+void illegalNumber(Command *command);
 
 /**
  * getExitStatus - exits the shell with the given status in command
@@ -12,7 +12,7 @@ void illegalNumber(char *shellName, size_t *commandID, Command *command);
  *
  * Return: exit status if it's valid or -1 if it's invalid
  */
-int getExitStatus(char *shellName, size_t *commandID, Command *command)
+int getExitStatus(Command *command)
 {
 	ssize_t intStatus, i;
 	char *strStatus = command->argv[1];
@@ -24,7 +24,7 @@ int getExitStatus(char *shellName, size_t *commandID, Command *command)
 
 	if (!isPositiveDigits(strStatus)) /* letters or negative number */
 	{
-		illegalNumber(shellName, commandID, command);
+		illegalNumber(command);
 		return (-1);
 	}
 
@@ -47,13 +47,13 @@ int getExitStatus(char *shellName, size_t *commandID, Command *command)
  *
  * Return: nothing
  */
-void illegalNumber(char *shellName, size_t *commandID, Command *command)
+void illegalNumber(Command *command)
 {
 	char *str;
 
 	print(STDERR_FILENO, shellName);
 	print(STDERR_FILENO, ": ");
-	str = intToStr(*commandID);
+	str = intToStr(commandID);
 	print(STDERR_FILENO, str);
 	print(STDERR_FILENO, ": ");
 	print(STDERR_FILENO, command->argv[0]);

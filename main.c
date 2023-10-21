@@ -23,7 +23,7 @@ int main(int ac, char **av)
 
 	/* Initial Values */
 	(void)ac;
-	commandID = 0;
+	commandID = 0, shellName = av[0];
 	script = NULL;
 	command = NULL;
 	signal(SIGINT, interruption);
