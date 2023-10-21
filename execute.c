@@ -9,8 +9,6 @@ int setPath(char **argv);
  * executeCommand - executes a command and then frees its feilds
  *
  * @command: The command struct
- * @shellName: the name of the running shell
- * @commandID: the number of the command being builded right now
  * @script: The script struct
  * Return: void
  */
@@ -42,8 +40,6 @@ void executeCommand(Command *command, Script *script)
 /**
  * notFound - handle the case of an unknown command was input
  *
- * @shellName: the shell name
- * @commandID: #of this command in the current session
  * @command: the command itself
  * Return: nothing
  */
@@ -131,8 +127,6 @@ void executeByPath(Command *command)
  * if yes it gets excuted
  *
  * @command: The command struct
- * @shellName: the name of the running shell
- * @commandID: the number of the command being builded right now
  * @script: The script struct
  *
  * Return: 0 if no built in commands were found

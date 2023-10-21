@@ -1,6 +1,6 @@
 #include "main.h"
 
-void buildScript2(char **lines, Script * script);
+void buildScript2(char **lines, Script *script);
 
 /**
  * buildScript - fills the fields of a script instance of the Script structure.
@@ -8,7 +8,6 @@ void buildScript2(char **lines, Script * script);
  * into multiple commands in script->lines
  *
  * @s: pointer to the script instance
- * @commandID: command counter
  * Return: 0 for success, 1 if an empty script was provided
  */
 int buildScript(Script **s)
@@ -52,12 +51,11 @@ int buildScript(Script **s)
 }
 
 /**
- * subScriptBuilder - extension for buildScript() as it exceeded 40 lines
+ * buildScript2 - extension for buildScript() as it exceeded 40 lines
  * and we need to satisfy betty :L)
  *
  * @lines: an array holding the command lines
  * @script: pointer to the script instance
- * @commandID: command counter
  * Return: nothing
 */
 void buildScript2(char **lines, Script *script)

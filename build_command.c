@@ -5,8 +5,6 @@
  * (Reads its string, and Makes argv[] for it)
  *
  * @readyStr: the command line (if you have it). Set it to NULL if you don't
- * @commandID:pointer to the commandID variable in main()
- * it represents #commands done in the running shell
  *
  * Return: a pointer to a newly constructed command structure
  * or NULL for errors
